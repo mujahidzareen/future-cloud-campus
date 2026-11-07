@@ -39,15 +39,19 @@ document.querySelectorAll(".tilt").forEach((card) => {
   const reset = () => {
     card.style.removeProperty("--tilt-x");
     card.style.removeProperty("--tilt-y");
+    card.style.removeProperty("--glow-x");
+    card.style.removeProperty("--glow-y");
   };
   card.addEventListener("pointerenter", () => { bounds = card.getBoundingClientRect(); });
   card.addEventListener("pointermove", (event) => {
     if (reducedMotion.matches || !pointerCanTilt.matches || !bounds) return;
     const x = Math.max(-.5, Math.min(.5, (event.clientX - bounds.left) / bounds.width - .5));
     const y = Math.max(-.5, Math.min(.5, (event.clientY - bounds.top) / bounds.height - .5));
-    const angle = card.hasAttribute("data-hero") ? 8 : 12;
+    const angle = card.hasAttribute("data-hero") ? 12 : 20;
     card.style.setProperty("--tilt-x", `${-y * angle}deg`);
     card.style.setProperty("--tilt-y", `${x * angle}deg`);
+    card.style.setProperty("--glow-x", `${(x + .5) * 100}%`);
+    card.style.setProperty("--glow-y", `${(y + .5) * 100}%`);
   }, { passive: true });
   card.addEventListener("pointerleave", reset);
   card.addEventListener("pointercancel", reset);
@@ -66,7 +70,7 @@ if ("IntersectionObserver" in window && !reducedMotion.matches) {
 
 document.addEventListener("pointerdown", (event) => {
   if (reducedMotion.matches) return;
-  const button = event.target.closest(".btn.primary");
+  const button = event.target.closest(".btn, .subject-card, .region-pill");
   if (!button || button.disabled || button.querySelector(".pulse")) return;
   const pulse = document.createElement("span");
   pulse.className = "pulse";

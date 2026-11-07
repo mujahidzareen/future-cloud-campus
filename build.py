@@ -28,7 +28,7 @@ def brand():
     return '<a class="brand" href="/" aria-label="Future Cloud Campus home"><img src="/assets/fcc-symbol.png" width="54" height="54" alt=""><span>Future Cloud<span class="brand-accent"> Campus</span><small>ONE CAMPUS. ENDLESS LEARNING.</small></span></a>'
 
 def nav(path):
-    links = [("/subjects/", "Subjects"), ("/quran-education/", "Quran Education"), ("/how-it-works/", "How It Works"), ("/countries/", "Countries"), ("/parents/", "For Parents")]
+    links = [("/subjects/", "Subjects"), ("/how-it-works/", "How It Works"), ("/countries/", "Countries"), ("/parents/", "For Parents")]
     items = "".join(f'<a href="{url}"{(" aria-current=page" if path == url else "")}>{label}</a>' for url, label in links)
     return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand()}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
@@ -108,45 +108,62 @@ def tiles(items):
     return '<div class="info-grid">' + ''.join(f'<article class="info-card reveal"><span class="tile-number">{i:02}</span><h3>{h}</h3><p>{p}</p></article>' for i,(h,p) in enumerate(items,1)) + '</div>'
 
 def home():
-    return f'''
+    symbol = '<img src="/assets/fcc-symbol.png" alt="" width="54" height="54">'
+    logo_edge = "".join(f'<span class="logo-edge" style="--depth:{depth}px"></span>' for depth in range(-13, 14))
+    return f"""
     <section class="hero"><div class="shell hero-grid">
       <div class="hero-copy">
-        <div class="hero-tag"><span>{icon("star")}</span> LIVE 1-TO-1 ONLINE LEARNING</div>
-        <h1>Big ideas.<br>Small class.<br><em>Brighter futures.</em></h1>
-        <p>Personalised online tutoring and Quran Education, built around your child’s goals, pace and schedule.</p>
+        <div class="hero-tag"><span>{icon("star")}</span> LIVE ONLINE TUTORING</div>
+        <h1>Learning that<br><em>fits your child.</em></h1>
+        <p>One-to-one lessons that build confidence in school subjects, at your child’s pace.</p>
         <div class="hero-actions">{button()}{button("Explore Subjects","/subjects/","secondary","diagonal")}</div>
-        <div class="hero-note"><span></span> One campus. Endless learning.</div>
       </div>
       <div class="hero-art tilt" data-hero>
-        <button class="motion-control" type="button" data-motion aria-pressed="false" hidden>Pause scene</button>
+        <button class="motion-control" type="button" data-motion aria-pressed="false" hidden>Pause animation</button>
         <div class="art-visual" aria-hidden="true">
-        <div class="art-index"><span></span> THE LEARNING CLOUD</div>
-        <div class="art-grid"></div><div class="art-orbit orbit1"></div><div class="art-orbit orbit2"></div><div class="art-orbit orbit3"></div>
-        <div class="scene">
-         <img class="cloud-art" src="/assets/campus.svg" alt="" width="620" height="520" fetchpriority="high">
-         <div class="float-tile art-math"><span>÷</span><span>×</span><span>+</span><span>=</span></div>
-         <div class="float-tile art-code">{icon("code")}</div>
-         <div class="float-tile art-lang"><b>Aa</b></div>
-         <div class="float-tile art-science">{icon("science")}</div>
-         <span class="spark spark-a">✦</span><span class="spark spark-b">✧</span><span class="spark spark-c">✦</span>
-         <span class="planet planet-a"></span><span class="planet planet-b"></span><span class="planet planet-c"></span>
-        </div><span class="art-caption">ACADEMICS <i></i> QURAN EDUCATION</span></div>
+          <div class="art-index"><span></span> FUTURE CLOUD CAMPUS</div>
+          <div class="art-grid"></div><div class="art-orbit orbit1"></div><div class="art-orbit orbit2"></div>
+          <div class="scene">
+            <div class="logo-platform"></div>
+            <div class="logo-float"><div class="logo-spinner">
+              {logo_edge}
+              <span class="logo-face logo-front">{symbol}</span>
+              <span class="logo-face logo-back">{symbol}</span>
+            </div></div>
+            <div class="float-tile art-math"><span>÷</span><span>×</span><span>+</span><span>=</span></div>
+            <div class="float-tile art-code">{icon("code")}</div>
+            <div class="float-tile art-science">{icon("science")}</div>
+            <span class="spark spark-a">✦</span><span class="spark spark-b">✧</span><span class="planet planet-a"></span>
+          </div>
+          <span class="art-caption">ONE CAMPUS <i></i> ENDLESS LEARNING</span>
+        </div>
       </div>
     </div></section>
     <section class="trust shell" aria-label="What families can expect">
-      <div>{icon("people")}<span><strong>Live 1-to-1</strong><small>One learner, one tutor</small></span></div>
-      <div>{icon("clock")}<span><strong>Flexible timings</strong><small>Around your schedule</small></span></div>
-      <div>{icon("chart")}<span><strong>Clear progress</strong><small>Goals and next steps</small></span></div>
-      <div>{icon("globe")}<span><strong>Learn from anywhere</strong><small>Across local time zones</small></span></div>
+      <div>{icon("people")}<strong>Live 1-to-1 lessons</strong></div>
+      <div>{icon("clock")}<strong>Flexible scheduling</strong></div>
+      <div>{icon("chart")}<strong>Clear progress goals</strong></div>
+      <div>{icon("globe")}<strong>Learn from anywhere</strong></div>
     </section>
-    <section class="shell section" id="subjects"><div class="section-heading-row">{section_head("THE SUBJECT LIBRARY","Find what they’ll love learning.","Five academic areas, with lessons tailored to how your child learns.")}<a class="text-link" href="/subjects/">View all subjects {icon("arrow")}</a></div>{cards()}</section>
-    <section class="band"><div class="shell section">{section_head("THE LEARNING JOURNEY","From first hello to a learning plan.","Four simple steps to find the right starting point.")}{timeline()}</div></section>
-    <section class="shell section two-col">{section_head("FOR PARENTS","See what’s improving.","Evaluations help you see what your child can do, where they need practice and what the tutor plans to cover next.")}{progress()}<div class="two-col-action"><a class="text-link" href="/parents/">Explore parent resources {icon("arrow")}</a></div></section>
-    <section class="shell quran-wrap reveal"><div class="quran-card"><div><div class="eyebrow"><i></i>A DEDICATED LEARNING PATH</div><h2>Quran Education</h2><p>Live, one-to-one learning in Quran reading, Noorani Qaida, Tajweed and Islamic Studies, with guidance suited to your child’s level.</p>{button("Explore Quran Education","/quran-education/","light","diagonal")}</div><img src="/assets/quran.svg" alt="" width="500" height="350" loading="lazy"></div></section>
-    <section class="shell section">{section_head("LEARN ACROSS TIME ZONES","A campus that meets you where you are.","Choose your country for curriculum and scheduling guidance.")}{country_picker()}</section>
-    <section class="band"><div class="shell section">{section_head("HOW TUTORS SUPPORT LEARNERS","A clear plan from the first lesson.")}{tiles([("Tutor matching", "We use the learner’s subject, level and schedule to guide the match."), ("Lesson goals", "The tutor and family agree on a starting point and practical goals."), ("Progress conversations", "Evaluations identify strengths, areas to practise and what to cover next.")])}</div></section>
-    <section class="shell section faq-grid">{section_head("GOOD TO KNOW","Questions families ask.")}{accordions(FAQ)}</section>
-    {cta()}'''
+    <section class="shell section" id="subjects"><div class="section-heading-row">{section_head("ACADEMIC TUTORING","Explore our subjects.")}<a class="text-link" href="/subjects/">All subjects {icon("arrow")}</a></div>{cards()}</section>
+    <section class="shell program-wrap reveal" aria-labelledby="quran-feature-title">
+      <div class="quran-feature">
+        <div class="quran-stage tilt" aria-hidden="true">
+          <div class="quran-stage-bg"></div><span class="quran-orbit"></span><span class="quran-star quran-star-top">✧</span><span class="quran-star quran-star-bottom">✦</span>
+          <img src="/assets/quran.svg" alt="" width="500" height="350" loading="lazy">
+        </div>
+        <div class="quran-feature-copy">
+          <div class="eyebrow"><i></i> OUR QURAN PROGRAMME</div><h2 id="quran-feature-title">Quran Education</h2>
+          <p>Build confidence in Quran reading and recitation with live, one-to-one guidance.</p>
+          <ul class="program-topics" aria-label="Featured courses"><li>Noorani Qaida</li><li>Quran Reading</li><li>Tajweed</li><li>Islamic Studies</li></ul>
+          {button("Explore Quran Education","/quran-education/","quran-btn","diagonal")}
+        </div>
+      </div>
+    </section>
+    <section class="band"><div class="shell section"><div class="section-heading-row">{section_head("THE LEARNING JOURNEY","How it works.")}<a class="text-link" href="/how-it-works/">See the steps {icon("arrow")}</a></div>{timeline()}</div></section>
+    <section class="shell section regional-strip">{section_head("LOCAL CURRICULUM SUPPORT","Find your curriculum.")}<div class="region-links">{''.join(f'<a class="region-pill tilt" href="/{slug}/"><span aria-hidden="true">{flag}</span>{name}{icon("diagonal")}</a>' for slug,name,flag,*_ in COUNTRIES)}</div></section>
+    <section class="shell section faq-grid home-faq"><div>{section_head("GOOD TO KNOW","Questions families ask.")}<a class="text-link" href="/faq/">All questions {icon("arrow")}</a></div>{accordions(FAQ[:3])}</section>
+    {cta()}"""
 
 page("/", "Future Cloud Campus | Online Tutoring & Quran Education", "Live one-to-one online tutoring and Quran Education for families. Explore academic subjects and find the right starting point with a free demo.", home())
 
