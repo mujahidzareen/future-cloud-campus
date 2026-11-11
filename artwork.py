@@ -145,6 +145,15 @@ def letters():
     <path d="M230 106v65h23q28 0 23-20-2-13-21-14h-25m0 0h22q20-1 20-16 0-15-23-15z" fill="none" stroke="#3a7969" stroke-width="10" stroke-linecap="round"/>
     </g>"""
 
+def arabic_letters():
+    return """<g transform="rotate(-7 200 160)" filter="url(#shadow)">
+    <rect x="82" y="88" width="125" height="150" rx="23" fill="url(#paper)"/>
+    <path d="M146 119v89" fill="none" stroke="#95774b" stroke-width="12" stroke-linecap="round"/>
+    <rect x="204" y="65" width="122" height="150" rx="22" fill="url(#mint)"/>
+    <path d="M226 131v22q0 24 36 24t36-24v-22" fill="none" stroke="#3a7969" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="262" cy="194" r="5" fill="#3a7969"/>
+    </g>"""
+
 def landmark(kind):
     if kind == "uk":
         return """<g filter="url(#shadow)"><path d="M153 258V109h94v149z" fill="url(#paper)"/><path d="M147 112h106V93H147z" fill="#d8c5a0"/><path d="m171 93 29-55 29 55z" fill="url(#blue)"/><circle cx="200" cy="143" r="25" fill="url(#white)" stroke="#c9aa79" stroke-width="5"/><path d="M200 125v18l12 6m-38 41v49m26-49v49m26-49v49" stroke="#8e865f" stroke-width="4" stroke-linecap="round"/><path d="M141 259h118" stroke="#a39780" stroke-width="10" stroke-linecap="round"/></g>"""
@@ -161,7 +170,7 @@ ART = {
     "logical-reasoning": ("Logical reasoning puzzles and time challenges", puzzle, clock, "gold"),
     "quran-education": ("Quran reading and guided study", open_book, globe, "mint"),
     "quran-reading": ("Open Quran and reading progress", open_book, chart, "mint"),
-    "noorani-qaida": ("Beginner reading foundations and study book", letters, open_book, "gold"),
+    "noorani-qaida": ("Arabic letter foundations and study book", arabic_letters, open_book, "gold"),
     "tajweed": ("Recitation practice and guided reading", open_book, speech, "blue"),
     "islamic-studies": ("Islamic learning and daily study", book, open_book, "mint"),
     "countries": ("Learning across countries and local times", globe, clock, "blue"),
