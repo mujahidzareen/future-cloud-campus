@@ -25,12 +25,11 @@ navigation.addEventListener("focusout", (event) => {
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const pointerCanTilt = matchMedia("(hover: hover) and (pointer: fine)");
-const motionControl = document.querySelector("[data-motion]");
+const motionControl = document.querySelector("[data-motion-global]");
 if (motionControl) {
-  const hero = motionControl.closest("[data-hero]");
   motionControl.hidden = false;
   motionControl.addEventListener("click", () => {
-    const paused = hero.classList.toggle("paused");
+    const paused = document.documentElement.classList.toggle("motion-paused");
     motionControl.setAttribute("aria-pressed", String(paused));
   });
 }

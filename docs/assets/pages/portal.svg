@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Upcoming connected learning workspaces">
+        <defs>
+        <linearGradient id="blue" x2=".8" y2="1"><stop stop-color="#9ab7ff"/><stop offset=".5" stop-color="#637fe2"/><stop offset="1" stop-color="#3f56b7"/></linearGradient>
+        <linearGradient id="lavender" x2=".8" y2="1"><stop stop-color="#eee8ff"/><stop offset=".6" stop-color="#c4b9ef"/><stop offset="1" stop-color="#9e91cf"/></linearGradient>
+        <linearGradient id="mint" x2=".8" y2="1"><stop stop-color="#d8faed"/><stop offset="1" stop-color="#8ac7b4"/></linearGradient>
+        <linearGradient id="paper" x2=".6" y2="1"><stop stop-color="#fff3d6"/><stop offset="1" stop-color="#e2c795"/></linearGradient>
+        <linearGradient id="gold" x2=".8" y2="1"><stop stop-color="#ffe6ac"/><stop offset="1" stop-color="#dcad6a"/></linearGradient>
+        <linearGradient id="peach" x2=".8" y2="1"><stop stop-color="#ffe5db"/><stop offset="1" stop-color="#e8a894"/></linearGradient>
+        <linearGradient id="white" x2=".6" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e3e8f5"/></linearGradient>
+        <radialGradient id="bg"><stop stop-color="#eee8ff"/><stop offset="1" stop-color="#fcfbff"/></radialGradient>
+        <linearGradient id="platform" x2="0" y2="1"><stop stop-color="#eee8ff"/><stop offset="1" stop-color="#cbc0ef"/></linearGradient>
+        <filter id="shadow" x="-45%" y="-45%" width="200%" height="220%"><feDropShadow dx="1" dy="9" stdDeviation="6" flood-color="#465180" flood-opacity=".22"/></filter>
+        </defs>
+        <rect width="480" height="360" rx="36" fill="url(#bg)"/>
+        <ellipse cx="239" cy="166" rx="189" ry="100" fill="none" stroke="#cbc0ef" opacity=".6" transform="rotate(-19 239 166)"/>
+        <ellipse cx="239" cy="166" rx="180" ry="116" fill="none" stroke="#cbc0ef" stroke-dasharray="2 7" opacity=".5" transform="rotate(21 239 166)"/>
+        <ellipse cx="230" cy="303" rx="143" ry="25" fill="url(#platform)" filter="url(#shadow)"/>
+        <g transform="translate(14 8)"><g transform="rotate(-5 200 160)" filter="url(#shadow)">
+    <rect x="83" y="63" width="230" height="157" rx="18" fill="url(#blue)"/>
+    <rect x="95" y="75" width="206" height="129" rx="10" fill="#edf3ff"/>
+    <path d="M68 220h257l24 23q4 6-7 10H55q-11-4-7-10z" fill="url(#lavender)"/>
+    <path d="M69 240h257" stroke="#fff" stroke-width="3" opacity=".7"/>
+    <path d="m143 115-23 20 23 20m109-40 23 20-23 20m-42-26-15 53" stroke="#677be7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="160" y="226" width="75" height="14" rx="4" fill="#bac6ef"/>
+    </g></g>
+        <g transform="translate(288 145) scale(.36)"><g transform="rotate(-8 200 150)" filter="url(#shadow)">
+    <path d="M200 48q-44 30-97 37v85q0 64 97 103 97-39 97-103V85q-53-7-97-37z" fill="url(#blue)" stroke="#bbceff" stroke-width="3"/>
+    <path d="M200 67q-40 24-79 30v73q0 50 79 83 79-33 79-83V97q-39-6-79-30z" fill="url(#lavender)" opacity=".8"/>
+    <path d="m158 159 28 29 57-63" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g></g>
+        <circle cx="79" cy="101" r="12" fill="url(#mint)" filter="url(#shadow)"/>
+        <circle cx="366" cy="67" r="10" fill="url(#lavender)"/>
+        <path d="M358 264q3 13 16 16-13 3-16 16-3-13-16-16 13-3 16-16z" fill="#b3a2e1"/>
+        <path d="M104 48q2 8 10 10-8 2-10 10-2-8-10-10 8-2 10-10z" fill="#dbc396"/>
+        </svg>

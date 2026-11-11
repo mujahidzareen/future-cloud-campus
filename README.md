@@ -5,10 +5,11 @@ Review version of the Future Cloud Campus website. The Parent and Teacher Portal
 ## Source and build
 
 - `content.py` holds programme, country and FAQ copy.
+- `artwork.py` creates a distinct vector illustration for each of the 30 inner pages.
 - `build.py` renders 31 HTML pages, metadata, the preview robots policy and sitemap.
 - `dist/assets/` contains original logo files, SVG illustrations, CSS and JavaScript.
 - Run `python -B build.py` from the root to regenerate pages. Set `FCC_ORIGIN` to override the canonical origin. Serve `dist/` over HTTP for local testing.
-- The stylesheet implements the clay surfaces, SVG scene, scroll reveals and reduced-motion fallback. No third-party frontend packages are required.
+- The stylesheet implements the rotating header logo, lesson illustration, clay surfaces, scroll reveals and reduced-motion fallback. The Inter font and its license are stored in assets/fonts. No third-party frontend packages are required.
 
 ## GitHub Pages
 

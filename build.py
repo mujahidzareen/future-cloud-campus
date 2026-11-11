@@ -6,6 +6,7 @@ from html import escape
 from pathlib import Path
 from shutil import copytree
 from content import SUBJECTS, QURAN, COUNTRIES, FAQ, STEPS
+from artwork import ART, generate_artwork
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "dist" / "assets"
@@ -18,22 +19,29 @@ PAGES = []
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
 
+generate_artwork(DIST)
+
 def icon(name, extra=""):
     return f'<svg class="icon {extra}" aria-hidden="true"><use href="/assets/icons.svg#{name}"></use></svg>'
 
 def button(text="Book a Free Demo", href="/book-a-demo/", variant="primary", glyph="arrow"):
     return f'<a class="btn {variant}" href="{href}">{text}{icon(glyph) if glyph else ""}</a>'
 
-def brand():
-    return '<a class="brand" href="/" aria-label="Future Cloud Campus home"><img src="/assets/fcc-symbol.png" width="54" height="54" alt=""><span>Future Cloud<span class="brand-accent"> Campus</span><small>ONE CAMPUS. ENDLESS LEARNING.</small></span></a>'
+def brand(animate=False):
+    image = '<img src="/assets/fcc-symbol.png" width="54" height="54" alt="">'
+    emblem = image
+    if animate:
+        edges = "".join(f'<span class="brand-edge" style="--depth:{depth}px"></span>' for depth in range(-4, 5))
+        emblem = f'<span class="brand-emblem"><span class="brand-spin">{edges}<span class="brand-face brand-front">{image}</span><span class="brand-face brand-back">{image}</span></span></span>'
+    return f'<a class="brand" href="/" aria-label="Future Cloud Campus home">{emblem}<span>Future Cloud<span class="brand-accent"> Campus</span><small>ONE CAMPUS. ENDLESS LEARNING.</small></span></a>'
 
 def nav(path):
     links = [("/subjects/", "Subjects"), ("/how-it-works/", "How It Works"), ("/countries/", "Countries"), ("/parents/", "For Parents")]
     items = "".join(f'<a href="{url}"{(" aria-current=page" if path == url else "")}>{label}</a>' for url, label in links)
-    return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand()}
+    return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand(True)}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
     <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}<a class="mobile-portal" href="/portal/">Portal</a></nav>
-    <div class="nav-actions"><a class="portal-link" href="/portal/">{icon("lock")} Portal</a>{button("Free Demo")}</div></div></header>'''
+    <div class="nav-actions"><button class="site-motion" type="button" data-motion-global aria-pressed="false" aria-label="Pause animations" title="Pause animations" hidden><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path class="pause-bars" d="M9 5v14M15 5v14"/><path class="resume-triangle" d="m8 5 11 7-11 7z"/></svg></button><a class="portal-link" href="/portal/">{icon("lock")} Portal</a>{button("Free Demo")}</div></div></header>'''
 
 def footer():
     return f'''<footer class="site-footer"><div class="shell footer-main"><div class="footer-brand">{brand()}<p>Live online learning for families across time zones.</p></div>
@@ -56,7 +64,7 @@ def page(path, title, description, body, crumbs=None):
     <meta name="robots" content="noindex, nofollow"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/site.js"></script>{structured_markup}
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/site.js"></script>{structured_markup}
     </head><body>{nav(path)}<main id="main">{body}</main>{footer()}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
@@ -71,11 +79,14 @@ def section_head(kicker, title, description=""):
 def breadcrumb(items):
     return '<nav aria-label="Breadcrumb" class="crumb">' + " / ".join(f'<a href="{url}">{label}</a>' for label, url in items[:-1]) + f' / <span aria-current="page">{items[-1][0]}</span></nav>'
 
+def page_illustration(route, extra=""):
+    key = route.strip("/")
+    title = ART[key][0]
+    image = key.replace("/", "-") + ".svg"
+    return f'<figure class="page-illustration tilt {extra}"><img class="ambient-art" src="/assets/pages/{image}" alt="{escape(title, quote=True)}" width="480" height="360" decoding="async"></figure>'
+
 def hero_small(kicker, title, text, crumbs, actions="", tile="book", tone="violet"):
-    return f'''<section class="inner-hero"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div>
-    <div class="eyebrow"><i></i>{kicker}</div><h1>{title}</h1><p>{text}</p>{f'<div class="hero-actions">{actions}</div>' if actions else ''}</div>
-    <div class="inner-art" aria-hidden="true"><span class="orb-ring"></span><span class="orb-ring ring2"></span><span class="orbit-dot"></span><div class="clay-icon {tone}">{icon(tile)}</div></div>
-    </div></div></section>'''
+    return f'<section class="inner-hero"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div><div class="eyebrow"><i></i>{kicker}</div><h1>{title}</h1><p>{text}</p>{f"<div class=hero-actions>{actions}</div>" if actions else ""}</div>{page_illustration(crumbs[-1][1])}</div></div></section>'
 
 def cards():
     return '<div class="subject-grid">' + ''.join(f'''<a class="subject-card tilt reveal" href="/{slug}/">
@@ -105,11 +116,9 @@ def country_picker():
     return f'<div class="country-picker reveal"><div class="country-buttons" aria-label="Select a country">{tabs}</div>{panels}<noscript><p><a href="/usa/">United States</a> · <a href="/canada/">Canada</a></p></noscript></div>'
 
 def tiles(items):
-    return '<div class="info-grid">' + ''.join(f'<article class="info-card reveal"><span class="tile-number">{i:02}</span><h3>{h}</h3><p>{p}</p></article>' for i,(h,p) in enumerate(items,1)) + '</div>'
+    return '<div class="info-grid">' + ''.join(f'<article class="info-card tilt reveal"><span class="tile-number">{i:02}</span><h3>{h}</h3><p>{p}</p></article>' for i,(h,p) in enumerate(items,1)) + '</div>'
 
 def home():
-    symbol = '<img src="/assets/fcc-symbol.png" alt="" width="54" height="54">'
-    logo_edge = "".join(f'<span class="logo-edge" style="--depth:{depth}px"></span>' for depth in range(-13, 14))
     return f"""
     <section class="hero"><div class="shell hero-grid">
       <div class="hero-copy">
@@ -118,26 +127,10 @@ def home():
         <p>One-to-one lessons that build confidence in school subjects, at your child’s pace.</p>
         <div class="hero-actions">{button()}{button("Explore Subjects","/subjects/","secondary","diagonal")}</div>
       </div>
-      <div class="hero-art tilt" data-hero>
-        <button class="motion-control" type="button" data-motion aria-pressed="false" hidden>Pause animation</button>
-        <div class="art-visual" aria-hidden="true">
-          <div class="art-index"><span></span> FUTURE CLOUD CAMPUS</div>
-          <div class="art-grid"></div><div class="art-orbit orbit1"></div><div class="art-orbit orbit2"></div>
-          <div class="scene">
-            <div class="logo-platform"></div>
-            <div class="logo-float"><div class="logo-spinner">
-              {logo_edge}
-              <span class="logo-face logo-front">{symbol}</span>
-              <span class="logo-face logo-back">{symbol}</span>
-            </div></div>
-            <div class="float-tile art-math"><span>÷</span><span>×</span><span>+</span><span>=</span></div>
-            <div class="float-tile art-code">{icon("code")}</div>
-            <div class="float-tile art-science">{icon("science")}</div>
-            <span class="spark spark-a">✦</span><span class="spark spark-b">✧</span><span class="planet planet-a"></span>
-          </div>
-          <span class="art-caption">ONE CAMPUS <i></i> ENDLESS LEARNING</span>
-        </div>
-      </div>
+      <figure class="hero-art tilt" data-hero>
+        <img class="hero-learning-picture" src="/assets/hero-live-learning.webp" width="1280" height="960" alt="A clay-style laptop showing a live lesson, resting on books with a pencil and science model" fetchpriority="high" decoding="async">
+        <figcaption>ONE CAMPUS. ENDLESS LEARNING.</figcaption>
+      </figure>
     </div></section>
     <section class="trust shell" aria-label="What families can expect">
       <div>{icon("people")}<strong>Live 1-to-1 lessons</strong></div>
@@ -179,7 +172,7 @@ for slug,name,glyph,tone,tag,desc,topics,audience,faq in SUBJECTS:
 crumbs=[("Home","/"),("Quran Education","/quran-education/")]
 quran_cards=''.join(f'<a class="subject-card quran-subject tilt reveal" href="/{slug}/"><span class="clay-icon mint">{icon("book")}</span><h3>{name}</h3><p>{desc}</p><span class="card-arrow">{icon("diagonal")}</span></a>' for slug,name,desc,_ in QURAN)
 page("/quran-education/","Quran Education","Explore live Quran Reading, Noorani Qaida, Tajweed and Islamic Studies at Future Cloud Campus.",
-    f'<section class="inner-hero quran-inner"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div><div class="eyebrow"><i></i>DEDICATED LEARNING PATH</div><h1>Quran Education</h1><p>One-to-one learning with a clear starting level, guided practice and progress updates for families.</p><div class="hero-actions">{button(href="/book-a-demo/?course=quran-education",variant="light")}</div></div><img src="/assets/quran.svg" alt="" width="500" height="350"></div></div></section>'
+    f'<section class="inner-hero quran-inner"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div><div class="eyebrow"><i></i>DEDICATED LEARNING PATH</div><h1>Quran Education</h1><p>One-to-one learning with a clear starting level, guided practice and progress updates for families.</p><div class="hero-actions">{button(href="/book-a-demo/?course=quran-education",variant="light")}</div></div>{page_illustration("/quran-education/", "quran-page-art")}</div></div></section>'
     +f'<section class="shell section">{section_head("COURSES","Find a starting point.")}<div class="subject-grid quran-grid">{quran_cards}</div></section><section class="band"><div class="shell section">{section_head("THE LEARNING APPROACH","Assessment, practice and review.")}{tiles([("Initial placement","Discuss age, prior reading and preferred times. The teacher can check letter recognition or listen to a short reading sample."),("Teacher match","Ask admissions about teacher fit, the selection process and gender matching availability for your schedule."),("Progress feedback","Review the previous lesson, fluency and Tajweed. The evaluation can record strengths, practice areas and the recommended pace.")])}</div></section>'+cta("quran-education"),crumbs)
 for slug,name,desc,outcomes in QURAN:
     path=f"/{slug}/"
@@ -233,7 +226,7 @@ country_options = ''.join(f'<option value="{slug}" data-code="{code}">{name}</op
     ("uk","United Kingdom","+44"),("usa","United States","+1"),("canada","Canada","+1"),("ireland","Ireland","+353"),("australia","Australia","+61"),("new-zealand","New Zealand","+64"),("pakistan","Pakistan","+92"),("other","Other","")])
 form=f'''<section class="form-band"><div class="shell">{breadcrumb(crumbs)}<div class="form-layout">
   <div class="form-intro"><div class="eyebrow"><i></i>ADMISSIONS</div><h1>Book a Free Demo</h1><p>Tell us what your child would like to learn and when your family is available.</p>
-  <div class="form-guide"><span class="clay-icon violet">{icon("calendar")}</span><div><h2>What happens next?</h2><p>In the live booking process, admissions will review the request, discuss tutor availability and confirm a demo time with you.</p></div></div>
+  {page_illustration("/book-a-demo/", "booking-art")}<div class="form-guide"><span class="clay-icon violet">{icon("calendar")}</span><div><h2>What happens next?</h2><p>In the live booking process, admissions will review the request, discuss tutor availability and confirm a demo time with you.</p></div></div>
   <div class="notice">{icon("lock")}<p><strong>Preview only.</strong> Use sample details. The form previews the request on this page and sends nothing to admissions.</p></div>
   </div>
   <form class="demo-form" id="demo-form" autocomplete="off" method="dialog" data-preview>
@@ -279,14 +272,7 @@ def portal_page(role=None):
         f'<a href="/portal/{key}/"{" aria-current=page" if key == role else ""}>{icon("people" if key == "parent" else "book")}{name}</a>'
         for key, (name, *_rest) in PORTALS.items()
     )
-    art = f"""<div class="launch-art tilt" aria-hidden="true">
-      <div class="launch-halo"></div><div class="launch-orbit launch-orbit-one"></div><div class="launch-orbit launch-orbit-two"></div>
-      <div class="launch-shadow"></div><div class="launch-core">{icon("lock")}</div>
-      <span class="launch-float launch-calendar">{icon("calendar")}</span>
-      <span class="launch-float launch-progress">{icon("chart")}</span>
-      <span class="launch-float launch-book">{icon("book")}</span>
-      <span class="launch-spark launch-spark-one">✦</span><span class="launch-spark launch-spark-two">✧</span>
-    </div>"""
+    art = page_illustration(path, "portal-illustration")
     banner = f"""<section class="launch-section"><div class="shell">{breadcrumb(crumbs)}
       <div class="launch-banner"><div class="launch-copy">
         <span class="launch-status"><i></i> IN DEVELOPMENT</span>
@@ -299,7 +285,7 @@ def portal_page(role=None):
     if role:
         features = PORTALS[role][2]
         upcoming = '<div class="info-grid">' + "".join(
-            f'<article class="info-card reveal"><span class="clay-icon {tone}">{icon(glyph)}</span><h3>{name}</h3><p>{desc}</p></article>'
+            f'<article class="info-card tilt reveal"><span class="clay-icon {tone}">{icon(glyph)}</span><h3>{name}</h3><p>{desc}</p></article>'
             for (name, glyph, desc), tone in zip(features, ("violet", "blue", "mint"))
         ) + '</div>'
     else:
