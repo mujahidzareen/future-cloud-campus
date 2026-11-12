@@ -40,7 +40,7 @@ if (motionControl) {
     motionControl.setAttribute("aria-pressed", String(paused));
   });
 }
-document.querySelectorAll(".tilt").forEach((card) => {
+document.querySelectorAll(".tilt, .btn, .country-btn, .region-pill, .site-motion, .menu-toggle").forEach((card) => {
   let bounds;
   const reset = () => {
     card.style.removeProperty("--tilt-x");
@@ -50,10 +50,10 @@ document.querySelectorAll(".tilt").forEach((card) => {
   };
   card.addEventListener("pointerenter", () => { bounds = card.getBoundingClientRect(); });
   card.addEventListener("pointermove", (event) => {
-    if (reducedMotion.matches || !pointerCanTilt.matches || !bounds) return;
+    if (reducedMotion.matches || !pointerCanTilt.matches || !bounds || document.documentElement.classList.contains("motion-paused")) return;
     const x = Math.max(-.5, Math.min(.5, (event.clientX - bounds.left) / bounds.width - .5));
     const y = Math.max(-.5, Math.min(.5, (event.clientY - bounds.top) / bounds.height - .5));
-    const angle = card.hasAttribute("data-hero") ? 12 : 20;
+    const angle = card.hasAttribute("data-hero") ? 12 : card.classList.contains("tilt") ? 16 : 8;
     card.style.setProperty("--tilt-x", `${-y * angle}deg`);
     card.style.setProperty("--tilt-y", `${x * angle}deg`);
     card.style.setProperty("--glow-x", `${(x + .5) * 100}%`);
@@ -61,6 +61,9 @@ document.querySelectorAll(".tilt").forEach((card) => {
   }, { passive: true });
   card.addEventListener("pointerleave", reset);
   card.addEventListener("pointercancel", reset);
+  reducedMotion.addEventListener("change", reset);
+  pointerCanTilt.addEventListener("change", reset);
+  motionControl?.addEventListener("click", reset);
 });
 
 if ("IntersectionObserver" in window && !reducedMotion.matches) {
@@ -75,8 +78,8 @@ if ("IntersectionObserver" in window && !reducedMotion.matches) {
 }
 
 document.addEventListener("pointerdown", (event) => {
-  if (reducedMotion.matches) return;
-  const button = event.target.closest(".btn, .subject-card, .region-pill");
+  if (reducedMotion.matches || document.documentElement.classList.contains("motion-paused")) return;
+  const button = event.target.closest(".btn, .subject-card, .feature-link, .story-card, .resource-card, .country-btn, .region-pill, .site-motion, .menu-toggle");
   if (!button || button.disabled || button.querySelector(".pulse")) return;
   const pulse = document.createElement("span");
   pulse.className = "pulse";

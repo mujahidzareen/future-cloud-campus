@@ -610,3 +610,80 @@ h1{overflow-wrap:break-word}
 @media(prefers-reduced-motion:reduce){
   .story-card:hover .story-picture img,.resource-card:hover>img,.feature-link:hover .clay-icon,.exam-card:hover .clay-icon{transform:none}
 }
+
+/* Interactive clay surfaces: restrained colour, moving light, physical depth. */
+@property --fx-top{syntax:'<color>';inherits:false;initial-value:#fff}
+@property --fx-bottom{syntax:'<color>';inherits:false;initial-value:#f7f5fd}
+@property --fx-rim-a{syntax:'<color>';inherits:false;initial-value:#e0e1f0}
+@property --fx-rim-b{syntax:'<color>';inherits:false;initial-value:#e0e1f0}
+@property --fx-angle{syntax:'<angle>';inherits:false;initial-value:0deg}
+:is(.subject-card,.info-card,.report,.feature-link,.story-card,.resource-card,.plan-card,.plan-card.recommended,.exam-card,.level-card){
+  position:relative;
+  border-color:transparent;
+  background:radial-gradient(ellipse at var(--glow-x,25%) var(--glow-y,10%),#ffffffb3,transparent 65%) padding-box,linear-gradient(145deg,var(--fx-top),var(--fx-bottom)) padding-box,conic-gradient(from var(--fx-angle),var(--fx-rim-a),var(--fx-rim-b),var(--fx-rim-a)) border-box;
+  transition:transform .24s ease-out,box-shadow .35s,--fx-top .45s,--fx-bottom .45s,--fx-rim-a .35s,--fx-rim-b .35s,--fx-angle 1.2s cubic-bezier(.2,.7,.2,1);
+}
+.subject-card{--fx-top:#f7f3ff;--fx-bottom:#eee9fb}
+.plan-card.recommended{--fx-top:#f0edff;--fx-bottom:#e6e9ff;--fx-rim-a:#b3b4e7;--fx-rim-b:#b3b4e7;border-color:transparent}
+:is(.btn,.country-btn,.region-pill,.site-motion,.menu-toggle){
+  position:relative;
+  --fx-top:#fff;--fx-bottom:#f4f3fc;--fx-rim-a:#e3def2;--fx-rim-b:#e3def2;
+  border-color:transparent;
+  background:radial-gradient(ellipse at var(--glow-x,30%) var(--glow-y,10%),#ffffff26,transparent 72%) padding-box,linear-gradient(145deg,var(--fx-top),var(--fx-bottom)) padding-box,conic-gradient(from var(--fx-angle),var(--fx-rim-a),var(--fx-rim-b),var(--fx-rim-a)) border-box;
+  transform:perspective(700px) translateY(var(--lift,0px)) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) scale(var(--press,1));
+  transition:transform .24s ease-out,box-shadow .3s,--fx-top .4s,--fx-bottom .4s,--fx-rim-a .35s,--fx-rim-b .35s,--fx-angle 1.1s;
+}
+.btn.primary{--fx-top:#4c57ec;--fx-bottom:#3642cc;--fx-rim-a:#6c76f3;--fx-rim-b:#4b57d9}
+.btn.quran-btn{--fx-top:#24725c;--fx-bottom:#155541;--fx-rim-a:#478c75;--fx-rim-b:#28745c}
+.btn.launch-back{--fx-top:#292448;--fx-bottom:#24203f;--fx-rim-a:#8383bf;--fx-rim-b:#8383bf}
+.country-btn[aria-pressed=true]{--fx-top:#f1edff;--fx-bottom:#e8e5ff;--fx-rim-a:#b4a5f6;--fx-rim-b:#c1b6f8}
+:is(.subject-card,.info-card,.report,.feature-link,.story-card,.resource-card,.plan-card,.exam-card,.level-card):focus-within{
+  --fx-top:#f3f7ff;--fx-bottom:#eaf7f5;--fx-rim-a:#7887ee;--fx-rim-b:#65c5b3;--fx-angle:150deg;
+}
+:is(.btn,.country-btn,.region-pill,.site-motion,.menu-toggle):focus-visible{
+  --fx-rim-a:#7e88f5;--fx-rim-b:#73d2c0;--fx-angle:150deg;
+}
+@media(hover:hover) and (pointer:fine){
+  :is(.subject-card,.info-card,.report,.feature-link,.story-card,.resource-card,.plan-card,.exam-card,.level-card):hover{
+    --fx-top:#f3f7ff;--fx-bottom:#eaf7f5;--fx-rim-a:#7887ee;--fx-rim-b:#65c5b3;--fx-angle:150deg;
+    border-color:transparent;
+    box-shadow:inset 0 3px 7px #fff,0 8px 0 #cbd6e8,0 23px 35px #4e7aa62b,0 0 24px #6bbec013;
+  }
+  :is(.subject-card,.info-card,.report,.feature-link,.story-card,.resource-card,.plan-card,.exam-card,.level-card):hover:not(:active){--lift:-6px}
+  :is(.btn,.country-btn,.region-pill,.site-motion,.menu-toggle):hover{
+    --fx-top:#edf2ff;--fx-bottom:#e4f6f2;--fx-rim-a:#7c88ee;--fx-rim-b:#64c6b1;--fx-angle:155deg;
+    background:radial-gradient(ellipse at var(--glow-x,30%) var(--glow-y,10%),#ffffff40,transparent 72%) padding-box,linear-gradient(145deg,var(--fx-top),var(--fx-bottom)) padding-box,conic-gradient(from var(--fx-angle),var(--fx-rim-a),var(--fx-rim-b),var(--fx-rim-a)) border-box;
+    border-color:transparent;
+    box-shadow:inset 0 2px 4px #ffffffa6,0 5px 0 #c7d2e9,0 13px 22px #4e6cb22e;
+  }
+  .btn.primary:hover{--fx-top:#4c56dd;--fx-bottom:#215d9d;box-shadow:inset 0 2px 4px #ffffff45,0 5px 0 #253d96,0 14px 24px #4068ca42}
+  .btn.quran-btn:hover{--fx-top:#28785f;--fx-bottom:#155668;box-shadow:inset 0 2px 4px #ffffff40,0 5px 0 #164f4e,0 14px 24px #287c6740}
+  .btn.launch-back:hover{--fx-top:#343658;--fx-bottom:#244b53}
+  :is(.btn,.country-btn,.region-pill,.site-motion,.menu-toggle):hover:not(:active){
+    --lift:-3px;
+    transform:perspective(700px) translateY(var(--lift)) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
+  }
+}
+:is(.btn,.country-btn,.region-pill,.site-motion,.menu-toggle):active{
+  --fx-rim-a:#6f80eb;--fx-rim-b:#63c7ad;--fx-angle:180deg;--lift:2px;--press:.98;
+  transform:perspective(700px) translateY(2px) scale(.98);
+  box-shadow:inset 0 2px 5px #223b7c18,0 1px 0 #7c88bf,0 4px 9px #4e6cb21a;
+}
+:is(.subject-card,.info-card,.report,.feature-link,.story-card,.resource-card,.plan-card,.exam-card,.level-card):active{
+  --fx-rim-a:#7887ee;--fx-rim-b:#65c5b3;--fx-top:#edf4ff;--fx-bottom:#e5f5ef;
+  box-shadow:inset 0 2px 6px #607baa13,0 2px 0 #cbd6e8,0 6px 14px #4e7aa621;
+}
+:is(.nav-dropdown>summary,.quick-help>summary,.accordion summary,.practice-question summary){transition:color .25s,background-color .25s,box-shadow .25s}
+:is(.nav-dropdown>summary,.quick-help>summary,.accordion summary,.practice-question summary):is(:hover,:focus-visible){color:#354e9c;background-color:#edf4fa;box-shadow:inset 0 0 0 1px #c2d8e7}
+.nav-popover a{transition:background-color .25s,color .25s,box-shadow .25s}
+.nav-popover a:hover{background:#edf7f7;box-shadow:inset 3px 0 #72beaf}
+:is(.demo-form,.package-form,.package-summary,.reader-tools):focus-within{border-color:#91b7cd;box-shadow:0 9px 25px #3f7e9e14,inset 0 2px 5px #fff}
+.subject-choice span{transition:background-color .25s,border-color .25s,box-shadow .25s}
+.subject-choice:hover span{background:#eaf5f5;border-color:#8cbfb4;box-shadow:0 3px 9px #356c7c14}
+.pulse{box-shadow:none;background:radial-gradient(ellipse at var(--glow-x,50%) var(--glow-y,50%),#99e2dc55,transparent 70%);animation:surface-flash .5s ease-out both;z-index:2}
+@keyframes surface-flash{0%{opacity:0;box-shadow:inset 0 0 0 2px #8bbdc566}25%{opacity:1}100%{opacity:0;box-shadow:inset 0 0 0 5px #8bbdc500}}
+.motion-paused :is(.tilt,.btn,.country-btn,.region-pill,.site-motion,.menu-toggle){--tilt-x:0deg!important;--tilt-y:0deg!important}
+@media(prefers-reduced-motion:reduce){
+  :is(.tilt,.btn,.country-btn,.region-pill,.site-motion,.menu-toggle):is(:hover,:active){transform:none}
+  .pulse{display:none}
+}
