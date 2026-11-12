@@ -194,13 +194,53 @@ ART = {
     "portal/teacher": ("Upcoming teacher workspace with lessons and planning", laptop, calendar, "blue"),
 }
 
+def leaf():
+    return """<g filter="url(#shadow)"><path d="M105 220Q75 77 291 60q13 200-144 195z" fill="url(#mint)" stroke="#9dd3b9" stroke-width="3"/><path d="m120 266 139-155m-83 89-17-59m45 28 48 5m-103 52-19-51" fill="none" stroke="#4c9b80" stroke-width="7" stroke-linecap="round"/></g>"""
+
+def gulf_tower():
+    return """<g filter="url(#shadow)"><path d="M189 276V82h22v194m-40 0V139h18m22 137V139h18v137m-81 0V190h23m58 86V190h24v86" fill="url(#blue)" stroke="#a6bfe8" stroke-width="3"/><path d="M200 32v50m-14 37h28m-42 43h56m-76 57h96" stroke="#d1e4ff" stroke-width="4"/><path d="M123 277h153" stroke="#a7b3d7" stroke-width="10" stroke-linecap="round"/></g>"""
+
+from additions import EXTRA_SUBJECTS, CURRICULA, GULF_COUNTRIES, ARTICLES, NOTES
+
+ART.update({
+    "physics": ("Forces and motion with a clock and laboratory flask", clock, flask, "blue"),
+    "chemistry": ("Chemistry experiments with reaction notes", flask, document, "mint"),
+    "biology": ("Biology leaf structures and study notes", leaf, book, "mint"),
+    "languages": ("Language practice with letters and conversation", letters, speech, "peach"),
+    "humanities": ("History and geography sources around the world", globe, document, "gold"),
+    "business-economics": ("Business decisions, charts and planning", chart, briefcase, "violet"),
+    "curricula": ("School courses connected through books and the world", book, globe, "blue"),
+    "curricula/british": ("British school curriculum and lesson planning", lambda: landmark("uk"), calendar, "blue"),
+    "curricula/american": ("US school learning and academic progress", lambda: landmark("usa"), chart, "mint"),
+    "curricula/ib": ("International subjects and problem solving", globe, puzzle, "violet"),
+    "curricula/pakistan": ("School textbooks and board-course planning", book, calendar, "gold"),
+    "test-prep": ("Preparation with a practice paper and time planning", document, clock, "blue"),
+    "pricing": ("Planning a lesson package and schedule", calendar, briefcase, "violet"),
+    "custom-package": ("A tailored learning plan with goals and subject notes", puzzle, chart, "mint"),
+    "free-notes": ("A free collection of subject books and practice notes", book, document, "peach"),
+    "journal": ("Learning articles and study ideas", book, speech, "violet"),
+    "progress": ("Progress review with learning goals and practice notes", chart, book, "blue"),
+    "learning-levels": ("Learning from foundations to advanced school study", letters, globe, "mint"),
+    "uae": ("UAE skyline and school learning", gulf_tower, book, "blue"),
+    "saudi-arabia": ("Study planning for Saudi families", calendar, globe, "mint"),
+    "qatar": ("Lessons for Qatar with a local schedule", gulf_tower, clock, "peach"),
+    "oman": ("Study materials and scheduling for Oman", book, clock, "gold"),
+    "other-countries": ("A local learning plan wherever you study", globe, speech, "blue"),
+})
+article_art = [(calendar, book), (laptop, speech), (globe, chart), (document, puzzle), (document, chart)]
+for (slug,title,*_), (primary,secondary) in zip(ARTICLES, article_art):
+    ART[f"journal/{slug}"] = (title, primary, secondary, "blue")
+note_art = [(calculator,chart),(clock,calculator),(flask,calculator),(leaf,flask),(letters,document),(laptop,puzzle),(chart,calculator),(briefcase,globe),(globe,leaf),(document,globe),(chart,puzzle),(calculator,book)]
+for (slug,title,*_), (primary,secondary) in zip(NOTES, note_art):
+    ART[f"free-notes/{slug}"] = (title, primary, secondary, "mint")
+
 def generate_artwork(destination):
     directory = Path(destination) / "assets" / "pages"
     directory.mkdir(parents=True, exist_ok=True)
     palettes = {"violet":("#eee8ff","#cbc0ef"),"peach":("#fff0e8","#e9c8bb"),"mint":("#e7f7ef","#bbdccc"),"blue":("#e9f0ff","#b5caee"),"gold":("#fff5dd","#e7d4aa")}
     for route, (title, primary, secondary, tone) in ART.items():
         light, dark = palettes[tone]
-        svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="{title}">
+        svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="{title.replace(chr(38), chr(38)+'amp;')}">
         <defs>
         <linearGradient id="blue" x2=".8" y2="1"><stop stop-color="#9ab7ff"/><stop offset=".5" stop-color="#637fe2"/><stop offset="1" stop-color="#3f56b7"/></linearGradient>
         <linearGradient id="lavender" x2=".8" y2="1"><stop stop-color="#eee8ff"/><stop offset=".6" stop-color="#c4b9ef"/><stop offset="1" stop-color="#9e91cf"/></linearGradient>

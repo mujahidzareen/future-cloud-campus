@@ -11,7 +11,14 @@ const setMenu = (open) => {
 };
 menu.addEventListener("click", () => setMenu(menu.getAttribute("aria-expanded") !== "true"));
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && navigation.classList.contains("open")) {
+  if (event.key !== "Escape") return;
+  const openMenu = navigation.querySelector(".nav-dropdown[open]");
+  if (openMenu) {
+    openMenu.open = false;
+    openMenu.querySelector("summary").focus();
+    return;
+  }
+  if (navigation.classList.contains("open")) {
     setMenu(false);
     menu.focus();
   }
@@ -94,16 +101,20 @@ if (form) {
   const query = new URLSearchParams(location.search);
   const { country, timezone, code, course, phone } = form.elements;
   const defaultTimezones = {
-    uk: "Europe/London", ireland: "Europe/Dublin", pakistan: "Asia/Karachi", "new-zealand": "Pacific/Auckland"
+    uk: "Europe/London", ireland: "Europe/Dublin", pakistan: "Asia/Karachi", "new-zealand": "Pacific/Auckland", uae: "Asia/Dubai", "saudi-arabia": "Asia/Riyadh", qatar: "Asia/Qatar", oman: "Asia/Muscat", "other-countries": "other"
   };
   const syncCountry = () => {
     const selection = country.selectedOptions[0];
     code.value = selection?.dataset.code || (country.value === "other" ? "other" : "");
     timezone.value = defaultTimezones[country.value] || "";
   };
-  for (const field of [course, country]) {
+  for (const field of [course, country, form.elements.plan]) {
     const initial = query.get(field.name);
     if (initial && [...field.options].some((option) => option.value === initial)) field.value = initial;
+  }
+  for (const field of [form.elements.level, form.elements.curriculum, form.elements.goal, form.elements.time]) {
+    const initial = query.get(field.name);
+    if (initial) field.value = initial.slice(0, field.maxLength);
   }
   syncCountry();
   country.addEventListener("change", syncCountry);
@@ -123,6 +134,8 @@ if (form) {
       ["Country", country.selectedOptions[0].textContent],
       ["Time zone", timezone.selectedOptions[0].textContent],
       ["Subject", course.selectedOptions[0].textContent],
+      ["Plan", form.elements.plan.value || "To discuss"],
+      ["Curriculum / exam", form.elements.curriculum.value || "To discuss"],
       ["Age, year or grade", form.elements.level.value.trim()],
       ["Preferred time", form.elements.time.value.trim() || "To discuss"],
       ["Learning goal", form.elements.goal.value.trim() || "To discuss"]
@@ -146,4 +159,100 @@ if (form) {
     submit.focus();
   });
   submit.disabled = false;
+}
+
+// Native disclosure menus also support touch and keyboard input.
+const dropdowns = document.querySelectorAll(".nav-dropdown");
+dropdowns.forEach((dropdown) => {
+  dropdown.addEventListener("toggle", () => {
+    if (!dropdown.open) return;
+    dropdowns.forEach((other) => { if (other !== dropdown) other.open = false; });
+  });
+});
+document.addEventListener("pointerdown", (event) => {
+  dropdowns.forEach((dropdown) => {
+    if (!dropdown.contains(event.target)) dropdown.open = false;
+  });
+});
+
+document.querySelectorAll("[data-catalog]").forEach((catalog) => {
+  const search = catalog.querySelector("[data-filter]");
+  const cards = [...catalog.querySelectorAll(".subject-card, .resource-card, .story-card")];
+  const result = catalog.querySelector("[data-result-count]");
+  const empty = catalog.querySelector(".catalog-empty");
+  const filter = () => {
+    const words = search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    let count = 0;
+    cards.forEach((card) => {
+      const text = card.textContent.toLowerCase();
+      card.hidden = !words.every((word) => text.includes(word));
+      if (!card.hidden) count++;
+    });
+    result.textContent = `${count} of ${cards.length} available`;
+    empty.hidden = count !== 0;
+  };
+  search.addEventListener("input", filter);
+  filter();
+});
+
+const market = document.querySelector("[data-pricing-country]");
+if (market) {
+  market.addEventListener("change", () => {
+    document.querySelectorAll("[data-plan-link]").forEach((link) => {
+      const destination = new URL(link.href);
+      if (market.value) destination.searchParams.set("country", market.value);
+      else destination.searchParams.delete("country");
+      link.href = destination.href;
+    });
+  });
+}
+
+const planner = document.querySelector("#package-planner");
+if (planner) {
+  const summary = document.querySelector("#package-summary");
+  const link = document.querySelector("#package-link");
+  const feedback = document.querySelector("#package-feedback");
+  const updatePackage = () => {
+    const selected = [...planner.querySelectorAll('input[name="subjects"]:checked')];
+    const goal = planner.elements.goal.value.trim();
+    const timetable = planner.elements.schedule.value.trim();
+    const stage = planner.elements.stage.value;
+    const frequency = planner.elements.frequency.value;
+    summary.replaceChildren();
+    const values = [
+      ["Subjects", selected.map((input) => input.value).join(", ") || "To discuss"],
+      ["School stage", stage || "To discuss"],
+      ["Lesson rhythm", frequency],
+      ["Main goal", goal || "To discuss"],
+      ["Availability", timetable || "To discuss"]
+    ];
+    values.forEach(([label, value]) => {
+      const term = document.createElement("dt");
+      const description = document.createElement("dd");
+      term.textContent = label;
+      description.textContent = value;
+      summary.append(term, description);
+    });
+    const destination = new URL(link.href);
+    destination.search = "";
+    destination.searchParams.set("plan", "Custom package");
+    destination.searchParams.set("goal", [
+      selected.length ? "Subjects: " + selected.map((input) => input.value).join(", ") : "",
+      goal,
+      "Lesson rhythm: " + frequency
+    ].filter(Boolean).join(". ").slice(0, 400));
+    if (selected.length === 1) destination.searchParams.set("course", selected[0].dataset.course);
+    if (stage) destination.searchParams.set("level", stage);
+    if (timetable) destination.searchParams.set("time", timetable);
+    link.href = destination.href;
+  };
+  planner.addEventListener("change", updatePackage);
+  planner.addEventListener("input", updatePackage);
+  planner.addEventListener("submit", (event) => {
+    event.preventDefault();
+    updatePackage();
+    feedback.textContent = "Your selections are ready to review in the demo enquiry.";
+    link.focus();
+  });
+  updatePackage();
 }

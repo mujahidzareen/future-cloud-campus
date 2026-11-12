@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="History and geography sources around the world">
+        <defs>
+        <linearGradient id="blue" x2=".8" y2="1"><stop stop-color="#9ab7ff"/><stop offset=".5" stop-color="#637fe2"/><stop offset="1" stop-color="#3f56b7"/></linearGradient>
+        <linearGradient id="lavender" x2=".8" y2="1"><stop stop-color="#eee8ff"/><stop offset=".6" stop-color="#c4b9ef"/><stop offset="1" stop-color="#9e91cf"/></linearGradient>
+        <linearGradient id="mint" x2=".8" y2="1"><stop stop-color="#d8faed"/><stop offset="1" stop-color="#8ac7b4"/></linearGradient>
+        <linearGradient id="paper" x2=".6" y2="1"><stop stop-color="#fff3d6"/><stop offset="1" stop-color="#e2c795"/></linearGradient>
+        <linearGradient id="gold" x2=".8" y2="1"><stop stop-color="#ffe6ac"/><stop offset="1" stop-color="#dcad6a"/></linearGradient>
+        <linearGradient id="peach" x2=".8" y2="1"><stop stop-color="#ffe5db"/><stop offset="1" stop-color="#e8a894"/></linearGradient>
+        <linearGradient id="white" x2=".6" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e3e8f5"/></linearGradient>
+        <radialGradient id="bg"><stop stop-color="#fff5dd"/><stop offset="1" stop-color="#fcfbff"/></radialGradient>
+        <linearGradient id="platform" x2="0" y2="1"><stop stop-color="#fff5dd"/><stop offset="1" stop-color="#e7d4aa"/></linearGradient>
+        <filter id="shadow" x="-45%" y="-45%" width="200%" height="220%"><feDropShadow dx="1" dy="9" stdDeviation="6" flood-color="#465180" flood-opacity=".22"/></filter>
+        </defs>
+        <rect width="480" height="360" rx="36" fill="url(#bg)"/>
+        <ellipse cx="239" cy="166" rx="189" ry="100" fill="none" stroke="#e7d4aa" opacity=".6" transform="rotate(-19 239 166)"/>
+        <ellipse cx="239" cy="166" rx="180" ry="116" fill="none" stroke="#e7d4aa" stroke-dasharray="2 7" opacity=".5" transform="rotate(21 239 166)"/>
+        <ellipse cx="230" cy="303" rx="143" ry="25" fill="url(#platform)" filter="url(#shadow)"/>
+        <g transform="translate(14 8)"><g filter="url(#shadow)">
+    <circle cx="200" cy="148" r="99" fill="url(#blue)"/>
+    <ellipse cx="200" cy="148" rx="44" ry="99" fill="none" stroke="#d6ecff" stroke-width="2" opacity=".6"/>
+    <path d="M104 144h192m-176-50q80 28 160 0m-160 108q80-28 160 0" fill="none" stroke="#d6ecff" stroke-width="2" opacity=".6"/>
+    <path d="m153 71 32 9 3 18-20 14-5 23-25-3-10-20 10-21zm65 60 31-10 24 20-14 25-16-5-7 30-20-6-12-31z" fill="#a3dfcb"/>
+    <path d="M125 228q75 37 150 0m-83 24v16m16-16v16" fill="none" stroke="#adb6df" stroke-width="9" stroke-linecap="round"/>
+    <ellipse cx="200" cy="273" rx="54" ry="9" fill="url(#lavender)"/>
+    </g></g>
+        <g transform="translate(288 145) scale(.36)"><g transform="rotate(8 200 150)" filter="url(#shadow)">
+    <rect x="119" y="57" width="170" height="215" rx="17" fill="url(#lavender)"/>
+    <rect x="108" y="47" width="170" height="215" rx="17" fill="url(#white)"/>
+    <path d="M138 86h60m-60 27h107m-107 24h107m-107 24h78m-78 24h99" stroke="#bcc8e6" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="220" cy="223" r="22" fill="url(#mint)"/>
+    <path d="m210 223 7 7 14-16" fill="none" stroke="#2e755d" stroke-width="4" stroke-linecap="round"/>
+    </g></g>
+        <circle cx="79" cy="101" r="12" fill="url(#mint)" filter="url(#shadow)"/>
+        <circle cx="366" cy="67" r="10" fill="url(#lavender)"/>
+        <path d="M358 264q3 13 16 16-13 3-16 16-3-13-16-16 13-3 16-16z" fill="#b3a2e1"/>
+        <path d="M104 48q2 8 10 10-8 2-10 10-2-8-10-10 8-2 10-10z" fill="#dbc396"/>
+        </svg>
