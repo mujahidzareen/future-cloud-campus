@@ -1,0 +1,10 @@
+{
+  "admissions": {"endpoint":"", "email":"", "whatsapp":"", "privacy_reviewed":false, "provider_name":"", "provider_privacy_url":""},
+  "tutors": [],
+  "reviews": [],
+  "plans": {
+    "Weekly support": {"duration_minutes":null,"price":"","cancellation":""},
+    "Progress plan": {"duration_minutes":null,"price":"","cancellation":""},
+    "Exam focus": {"duration_minutes":null,"price":"","cancellation":""}
+  }
+}

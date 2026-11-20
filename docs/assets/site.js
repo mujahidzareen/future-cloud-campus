@@ -99,71 +99,6 @@ document.querySelectorAll(".country-picker").forEach((picker) => {
   });
 });
 
-const form = document.querySelector("#demo-form");
-if (form) {
-  const query = new URLSearchParams(location.search);
-  const { country, timezone, code, course, phone } = form.elements;
-  const defaultTimezones = {
-    uk: "Europe/London", ireland: "Europe/Dublin", pakistan: "Asia/Karachi", "new-zealand": "Pacific/Auckland", uae: "Asia/Dubai", "saudi-arabia": "Asia/Riyadh", qatar: "Asia/Qatar", oman: "Asia/Muscat", "other-countries": "other"
-  };
-  const syncCountry = () => {
-    const selection = country.selectedOptions[0];
-    code.value = selection?.dataset.code || (country.value === "other" ? "other" : "");
-    timezone.value = defaultTimezones[country.value] || "";
-  };
-  for (const field of [course, country, form.elements.plan]) {
-    const initial = query.get(field.name);
-    if (initial && [...field.options].some((option) => option.value === initial)) field.value = initial;
-  }
-  for (const field of [form.elements.level, form.elements.curriculum, form.elements.goal, form.elements.time]) {
-    const initial = query.get(field.name);
-    if (initial) field.value = initial.slice(0, field.maxLength);
-  }
-  syncCountry();
-  country.addEventListener("change", syncCountry);
-  phone.addEventListener("input", () => phone.setCustomValidity(""));
-  const confirmation = document.querySelector("#confirmation");
-  const summary = document.querySelector("#request-summary");
-  const submit = form.querySelector('button[type="submit"]');
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const digits = phone.value.replace(/[^0-9]/g, "");
-    if (digits.length < 7 || digits.length > 15) {
-      phone.setCustomValidity("Enter a phone number with 7 to 15 digits.");
-      phone.reportValidity();
-      return;
-    }
-    const fields = [
-      ["Country", country.selectedOptions[0].textContent],
-      ["Time zone", timezone.selectedOptions[0].textContent],
-      ["Subject", course.selectedOptions[0].textContent],
-      ["Plan", form.elements.plan.value || "To discuss"],
-      ["Curriculum / exam", form.elements.curriculum.value || "To discuss"],
-      ["Age, year or grade", form.elements.level.value.trim()],
-      ["Preferred time", form.elements.time.value.trim() || "To discuss"],
-      ["Learning goal", form.elements.goal.value.trim() || "To discuss"]
-    ];
-    summary.replaceChildren();
-    for (const [label, value] of fields) {
-      const term = document.createElement("dt");
-      const description = document.createElement("dd");
-      term.textContent = label;
-      description.textContent = value;
-      summary.append(term, description);
-    }
-    form.hidden = true;
-    confirmation.hidden = false;
-    confirmation.focus();
-  });
-  confirmation.querySelector("[data-edit]").addEventListener("click", () => {
-    confirmation.hidden = true;
-    summary.replaceChildren();
-    form.hidden = false;
-    submit.focus();
-  });
-  submit.disabled = false;
-}
-
 // Native disclosure menus also support touch and keyboard input.
 const dropdowns = document.querySelectorAll(".nav-dropdown");
 dropdowns.forEach((dropdown) => {
@@ -176,26 +111,6 @@ document.addEventListener("pointerdown", (event) => {
   dropdowns.forEach((dropdown) => {
     if (!dropdown.contains(event.target)) dropdown.open = false;
   });
-});
-
-document.querySelectorAll("[data-catalog]").forEach((catalog) => {
-  const search = catalog.querySelector("[data-filter]");
-  const cards = [...catalog.querySelectorAll(".subject-card, .resource-card, .story-card")];
-  const result = catalog.querySelector("[data-result-count]");
-  const empty = catalog.querySelector(".catalog-empty");
-  const filter = () => {
-    const words = search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    let count = 0;
-    cards.forEach((card) => {
-      const text = card.textContent.toLowerCase();
-      card.hidden = !words.every((word) => text.includes(word));
-      if (!card.hidden) count++;
-    });
-    result.textContent = `${count} of ${cards.length} available`;
-    empty.hidden = count !== 0;
-  };
-  search.addEventListener("input", filter);
-  filter();
 });
 
 const market = document.querySelector("[data-pricing-country]");

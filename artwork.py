@@ -234,6 +234,8 @@ note_art = [(calculator,chart),(clock,calculator),(flask,calculator),(leaf,flask
 for (slug,title,*_), (primary,secondary) in zip(NOTES, note_art):
     ART[f"free-notes/{slug}"] = (title, primary, secondary, "mint")
 
+ART.update({"tutors": ("Tutor conversation with a lesson notebook", speech, document, "blue"), "reviews": ("Family feedback and learning progress", speech, chart, "peach"), "try-a-lesson": ("Learning through numbers and science", calculator, flask, "blue")})
+
 def generate_artwork(destination):
     directory = Path(destination) / "assets" / "pages"
     directory.mkdir(parents=True, exist_ok=True)

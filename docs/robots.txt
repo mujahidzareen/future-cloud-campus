@@ -1,2 +1,3 @@
 User-agent: *
-Disallow: /
+Allow: /
+Sitemap: https://mujahidzareen.github.io/future-cloud-campus/sitemap.xml

@@ -1,5 +1,6 @@
 """Generate the crawlable, dependency-free FCC review site."""
 import json
+import hashlib
 import os
 import re
 from html import escape
@@ -9,6 +10,7 @@ from content import SUBJECTS, QURAN, COUNTRIES, FAQ, STEPS
 from artwork import ART, generate_artwork
 from additions import EXTRA_SUBJECTS, GULF_COUNTRIES, CURRICULA, LEVELS, PLANS, ARTICLES, NOTES
 from urllib.parse import urlencode
+from enhancements import CONFIG, LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -20,6 +22,8 @@ if not ASSETS.is_dir():
 DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
+INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js"))).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -27,9 +31,10 @@ if (DIST / "assets").resolve() != ASSETS.resolve():
 generate_artwork(DIST)
 
 def icon(name, extra=""):
+    if name in ("arrow", "diagonal"): return ""
     return f'<svg class="icon {extra}" aria-hidden="true"><use href="/assets/icons.svg#{name}"></use></svg>'
 
-def button(text="Book a Free Demo", href="/book-a-demo/", variant="primary", glyph="arrow"):
+def button(text="Book a Free Demo", href="/book-a-demo/", variant="primary", glyph=""):
     return f'<a class="btn {variant}" href="{href}">{text}{icon(glyph) if glyph else ""}</a>'
 
 def brand(animate=False):
@@ -48,7 +53,7 @@ def nav(path):
         return f'<details class="nav-dropdown"><summary>{label}<span aria-hidden="true">⌄</span></summary><div class="nav-popover">{"".join(link(url, text) for url, text in links)}</div></details>'
     items = "".join(link(url, label) for url, label in links)
     items += dropdown("Pricing", [("/pricing/", "Plans & pricing"), ("/custom-package/", "Custom packages")])
-    items += dropdown("Discover", [("/about/", "About FCC"), ("/how-it-works/", "How it works"), ("/learning-levels/", "Learning levels"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress"), ("/journal/", "Blogs & Articles"), ("/countries/", "Countries"), ("/parents/", "For parents"), ("/contact/", "Contact & FAQs")])
+    items += dropdown("Discover", [("/tutors/", "Tutors"), ("/reviews/", "Family feedback"), ("/try-a-lesson/", "Try a lesson"), ("/about/", "About FCC"), ("/how-it-works/", "How it works"), ("/learning-levels/", "Learning levels"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress"), ("/journal/", "Blogs & Articles"), ("/countries/", "Countries"), ("/parents/", "For parents"), ("/contact/", "Contact & FAQs")])
     return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand(True)}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
     <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}<a class="mobile-portal" href="/portal/">Portal</a></nav>
@@ -58,10 +63,15 @@ def footer():
     return f'''<footer class="site-footer"><div class="shell footer-main"><div class="footer-brand">{brand()}<p>Live online learning for families across time zones.</p></div>
     <div><strong>Explore</strong><a href="/subjects/">Academic subjects</a><a href="/quran-education/">Quran Education</a><a href="/curricula/">Curricula</a><a href="/test-prep/">Exam preparation</a><a href="/countries/">Countries</a></div>
     <div><strong>Families</strong><a href="/how-it-works/">How it works</a><a href="/parents/">For parents</a><a href="/pricing/">Plans &amp; pricing</a><a href="/free-notes/">Free Notes</a><a href="/faq/">FAQs</a><a href="/portal/">Parent &amp; Teacher Portal</a></div>
-    <div><strong>Campus</strong><a href="/about/">About FCC</a><a href="/contact/">Contact &amp; admissions</a><a href="/journal/">Blogs &amp; Articles</a><a href="/careers/">Careers</a></div></div>
+    <div><strong>Campus</strong><a href="/tutors/">Tutor matching</a><a href="/reviews/">Family feedback</a><a href="/try-a-lesson/">Try a mini lesson</a><a href="/about/">About FCC</a><a href="/contact/">Contact &amp; admissions</a><a href="/journal/">Blogs &amp; Articles</a><a href="/careers/">Careers</a></div></div>
     <div class="shell footer-legal"><span>© 2026 Future Cloud Campus</span><div><a href="/privacy/">Privacy</a><a href="/cookies/">Cookies</a><a href="/terms/">Terms</a><a href="/refund-cancellation/">Cancellations</a><a href="/safeguarding/">Safeguarding</a></div></div></footer>'''
 
 def page(path, title, description, body, crumbs=None):
+    body = enrich(path, body, NOTES, ARTICLES)
+    sensitive = path.startswith("/portal") or path in ("/book-a-demo/", "/privacy/", "/terms/", "/cookies/", "/refund-cancellation/", "/safeguarding/") or (path == "/tutors/" and not TUTORS) or (path == "/reviews/" and not REVIEWS)
+    robots = "index, follow" if INDEXABLE and not sensitive else "noindex, follow"
+    tone = "mint" if path.strip("/") in ["quran-education", "quran-reading", "noorani-qaida", "tajweed", "islamic-studies"] else "peach" if path.strip("/") in ["parents", "reviews", "about", "progress"] else "blue"
+    flip = path in ("/parents/", "/how-it-works/", "/progress/", "/curricula/", "/journal/", "/pricing/")
     full_title = title if path == "/" else f"{title} | Future Cloud Campus"
     meta = escape(description, quote=True)
     canonical = ORIGIN + path
@@ -72,11 +82,11 @@ def page(path, title, description, body, crumbs=None):
     structured_markup = "".join(f'<script type="application/ld+json">{json.dumps(item)}</script>' for item in structured)
     doc = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
     <title>{escape(full_title)}</title><meta name="description" content="{meta}"><meta name="theme-color" content="#f8f7ff">
-    <meta name="robots" content="noindex, nofollow"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
+    <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
-    <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/site.js"></script>{structured_markup}
-    </head><body>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details></body></html>'''
+    <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script>{structured_markup}
+    </head><body class="tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
     file = DIST / path.strip("/") / "index.html"
@@ -246,7 +256,7 @@ for slug, name, desc, details, glyph in [
 ]:
     path=f"/{slug}/"
     crumbs=[("Home","/"),(name,path)]
-    page(path,name,desc,hero_small("FUTURE CLOUD CAMPUS",name,desc,crumbs,button("Preview the demo form",variant="secondary") if slug=="contact" else "",glyph)+f'<section class="shell section"><div class="notice">{icon("language")}<p>{details}</p></div>{("<div class=resource-teasers>"+resource_teasers()+"</div>") if slug == "contact" else ""}</section>'+(f'<section class="shell section faq-grid">{section_head("ADMISSIONS","Before you get in touch.")}{accordions(FAQ[:3])}</section>' if slug == "contact" else ""),crumbs)
+    page(path,name,desc,hero_small("FUTURE CLOUD CAMPUS",name,desc,crumbs,button("Start a demo enquiry",variant="secondary") if slug=="contact" else "",glyph)+f'<section class="shell section"><div class="notice">{icon("language")}<p>{details}</p></div>{("<div class=resource-teasers>"+resource_teasers()+"</div>") if slug == "contact" else ""}</section>'+(f'<section class="shell section faq-grid">{section_head("ADMISSIONS","Before you get in touch.")}{accordions(FAQ[:3])}</section>' if slug == "contact" else ""),crumbs)
 
 POLICIES = {
     "privacy":("Privacy","The preview form is for sample details. It does not transmit or store submissions. Before live intake, FCC must approve how guardian details are collected, retained, shared and deleted."),
@@ -265,30 +275,15 @@ options = ''.join(f'<option value="{slug}">{escape(name)}</option>' for slug, na
 country_options = ''.join(f'<option value="{slug}" data-code="{code}">{name}</option>' for slug,name,code in [
     ("uk","United Kingdom","+44"),("usa","United States","+1"),("canada","Canada","+1"),("ireland","Ireland","+353"),("australia","Australia","+61"),("new-zealand","New Zealand","+64"),("pakistan","Pakistan","+92"),("uae","United Arab Emirates","+971"),("saudi-arabia","Saudi Arabia","+966"),("qatar","Qatar","+974"),("oman","Oman","+968"),("other-countries","Other countries",""),("other","Other","")])
 form=f'''<section class="form-band"><div class="shell">{breadcrumb(crumbs)}<div class="form-layout">
-  <div class="form-intro"><div class="eyebrow"><i></i>ADMISSIONS</div><h1>Book a Free Demo</h1><p>Tell us what your child would like to learn and when your family is available.</p>
-  {page_illustration("/book-a-demo/", "booking-art")}<div class="form-guide"><span class="clay-icon violet">{icon("calendar")}</span><div><h2>What happens next?</h2><p>In the live booking process, admissions will review the request, discuss tutor availability and confirm a demo time with you.</p></div></div>
-  <div class="notice">{icon("lock")}<p><strong>Preview only.</strong> Use sample details. The form previews the request on this page and sends nothing to admissions.</p></div>
-  </div>
-  <form class="demo-form" id="demo-form" autocomplete="off" method="dialog" data-preview>
-    <h2>Demo request</h2><p class="form-hint">Fields marked with * are required.</p>
-    <div class="field-grid">
-      <label>Parent or guardian name *<input name="name" required maxlength="100" placeholder="Sample Parent"></label>
-      <label>Email *<input name="email" type="email" required maxlength="160" placeholder="parent@example.com"></label>
-      <label>Country *<select name="country" required><option value="">Select country</option>{country_options}</select></label>
-      <label>Time zone *<select name="timezone" required><option value="">Select time zone</option><option value="Europe/London">UK · London</option><option value="Europe/Dublin">Ireland · Dublin</option><option value="America/New_York">US · Eastern</option><option value="America/Chicago">US · Central</option><option value="America/Denver">US · Mountain</option><option value="America/Los_Angeles">US · Pacific</option><option value="America/Anchorage">US · Alaska</option><option value="Pacific/Honolulu">US · Hawaii</option><option value="America/Toronto">Canada · Eastern</option><option value="America/Vancouver">Canada · Pacific</option><option value="America/Edmonton">Canada · Mountain</option><option value="America/Winnipeg">Canada · Central</option><option value="America/Halifax">Canada · Atlantic</option><option value="America/St_Johns">Canada · Newfoundland</option><option value="Australia/Sydney">Australia · Sydney</option><option value="Australia/Perth">Australia · Perth</option><option value="Pacific/Auckland">New Zealand · Auckland</option><option value="Asia/Karachi">Pakistan · Karachi</option><option value="Asia/Dubai">UAE · Dubai</option><option value="Asia/Riyadh">Saudi Arabia · Riyadh</option><option value="Asia/Qatar">Qatar · Doha</option><option value="Asia/Muscat">Oman · Muscat</option><option value="other">Other / discuss availability</option></select></label>
-      <div class="phone-field"><label>Country code *<select name="code" required><option value="">Code</option><option>+44</option><option>+1</option><option>+353</option><option>+61</option><option>+64</option><option>+92</option><option>+971</option><option>+966</option><option>+974</option><option>+968</option><option value="other">Other</option></select></label><label>WhatsApp / phone *<input name="phone" type="tel" required maxlength="22" minlength="7" pattern="[+0-9 \\(\\)\\-]{{7,22}}" title="Enter a phone number using digits, spaces, parentheses, plus or hyphen." placeholder="7700 900000"></label></div>
-      <label>Age, year or grade *<input name="level" required maxlength="50" placeholder="e.g. Year 8"></label>
-      <label>Subject or course *<select name="course" required><option value="">Select a subject</option>{options}</select></label>
-      <label>Preferred days and time<input name="time" maxlength="100" placeholder="e.g. Tuesday after 5 pm"></label>
-      <label>Lesson plan<select name="plan"><option value="">Discuss a plan</option><option>Weekly support</option><option>Progress plan</option><option>Exam focus</option><option>Custom package</option></select></label>
-      <label>Curriculum or exam<input name="curriculum" maxlength="120" placeholder="e.g. GCSE Chemistry, AQA"></label>
-      <label class="field-wide">Learning goal<textarea name="goal" maxlength="400" rows="3" placeholder="e.g. Practise fractions and word problems"></textarea></label>
-    </div>
-    <button class="btn primary" type="submit" disabled>Preview demo request {icon("arrow")}</button><noscript><p>Enable JavaScript to test the demo request preview.</p></noscript>
-  </form>
-  <div class="demo-form confirmation" id="confirmation" hidden tabindex="-1"><span class="clay-icon mint">{icon("check")}</span><h2>Your request preview</h2><p>Review the sample booking details below. No demo has been booked.</p><dl id="request-summary"></dl><button class="btn secondary" type="button" data-edit>Edit sample details {icon("arrow")}</button></div>
+<div class="form-intro"><div class="eyebrow">ADMISSIONS</div><h1>A good start.<br>One simple enquiry.</h1><p>Tell us what your child would like to learn. We’ll help you find a starting point.</p>{page_illustration("/book-a-demo/", "booking-art")}<div class="form-guide"><span class="clay-icon blue">{icon("calendar")}</span><div><h2>A request, then a conversation.</h2><p>A demo time is confirmed after reviewing your subject, school course and availability.</p></div></div><div class="notice"><p data-intake-notice><strong>Preview mode.</strong> Use sample details. This version does not send your enquiry.</p></div></div>
+<form class="demo-form booking-wizard" id="demo-form" autocomplete="on" novalidate>
+<div class="booking-progress"><span class="card-kicker" data-booking-progress>Step 1 of 3</span><ol aria-label="Booking steps"><li aria-current="step">Learning</li><li>Availability</li><li>Contact</li></ol></div>
+<fieldset data-booking-step="0"><legend>Learning needs</legend><p class="form-hint">Tell us what the learner would like to work on.</p><div class="field-grid"><label>Subject or course *<select name="course" required><option value="">Select a subject</option>{options}</select></label><label>Age, year or grade *<input name="level" required maxlength="50" placeholder="e.g. Year 8"></label><label>Curriculum or exam<input name="curriculum" maxlength="120" placeholder="e.g. GCSE Chemistry, AQA"></label><label>Lesson plan<select name="plan"><option value="">Discuss a plan</option><option>Weekly support</option><option>Progress plan</option><option>Exam focus</option><option>Custom package</option></select></label><label class="field-wide">Learning goal<textarea name="goal" maxlength="400" rows="3" placeholder="e.g. Practise fractions and word problems"></textarea></label></div></fieldset><fieldset data-booking-step="1" hidden><legend>Your availability</legend><p class="form-hint">Use the family’s local time. Your demo time will be confirmed separately.</p><div class="field-grid"><label>Country *<select name="country" required><option value="">Select country</option>{country_options}</select></label><label>Time zone *<select name="timezone" required><option value="">Select time zone</option><option value="Europe/London">UK · London</option><option value="Europe/Dublin">Ireland · Dublin</option><option value="America/New_York">US · Eastern</option><option value="America/Chicago">US · Central</option><option value="America/Denver">US · Mountain</option><option value="America/Los_Angeles">US · Pacific</option><option value="America/Anchorage">US · Alaska</option><option value="Pacific/Honolulu">US · Hawaii</option><option value="America/Toronto">Canada · Eastern</option><option value="America/Vancouver">Canada · Pacific</option><option value="America/Edmonton">Canada · Mountain</option><option value="America/Winnipeg">Canada · Central</option><option value="America/Halifax">Canada · Atlantic</option><option value="America/St_Johns">Canada · Newfoundland</option><option value="Australia/Sydney">Australia · Sydney</option><option value="Australia/Perth">Australia · Perth</option><option value="Pacific/Auckland">New Zealand · Auckland</option><option value="Asia/Karachi">Pakistan · Karachi</option><option value="Asia/Dubai">UAE · Dubai</option><option value="Asia/Riyadh">Saudi Arabia · Riyadh</option><option value="Asia/Qatar">Qatar · Doha</option><option value="Asia/Muscat">Oman · Muscat</option><option value="other">Other / discuss availability</option></select></label><label>Preferred days and time<input name="time" maxlength="100" placeholder="e.g. Tuesday after 5 pm"></label></div></fieldset><fieldset data-booking-step="2" hidden><legend>Contact details</legend><p class="form-hint">Parent or guardian details only. Fields marked * are required.</p><div class="field-grid"><label>Parent or guardian name *<input name="name" required maxlength="100" placeholder="Parent or guardian name" autocomplete="name"></label><label>Email *<input name="email" type="email" required maxlength="160" placeholder="parent@example.com" autocomplete="email"></label><div class="phone-field"><label>Country code *<select name="code" required><option value="">Code</option><option>+44</option><option>+1</option><option>+353</option><option>+61</option><option>+64</option><option>+92</option><option>+971</option><option>+966</option><option>+974</option><option>+968</option><option value="other">Other</option></select></label><label>WhatsApp / phone *<input autocomplete="tel-national" name="phone" type="tel" required maxlength="22" minlength="7" pattern="[+0-9 \\(\\)\\-]{{7,22}}" title="Enter a phone number using digits, spaces, parentheses, plus or hyphen." placeholder="7700 900000"></label></div></div><label class="consent-field"><input type="checkbox" name="consent" required><span>I am a parent or guardian and I have read the <a href="/privacy/">privacy information</a>.</span></label><div class="form-trap" aria-hidden="true"><label>Leave this blank<input name="website" tabindex="-1" autocomplete="off"></label></div></fieldset>
+<p class="booking-error" role="alert" data-booking-error></p><div class="booking-buttons"><button type="button" class="btn secondary" data-booking-back hidden>Back</button><button type="button" class="btn primary" data-booking-next>Continue</button><button class="btn primary" type="submit" hidden data-booking-submit>{"Send demo enquiry" if LIVE else "Review sample enquiry"}</button></div><noscript><p>Enable JavaScript to use the enquiry form.</p></noscript></form>
+<div class="demo-form confirmation" id="confirmation" hidden tabindex="-1"><span class="clay-icon mint">{icon("check")}</span><h2 data-confirmation-title>Your sample enquiry</h2><p data-confirmation-copy>Review the details. This preview has not sent a request or booked a demo.</p><dl id="request-summary"></dl><div class="booking-buttons"><button class="btn secondary" type="button" data-edit>Edit details</button><button class="btn secondary" type="button" data-copy-enquiry>Copy enquiry</button></div><p role="status" data-copy-status></p></div>
 </div></div></section>'''
-page("/book-a-demo/","Book a Free Demo","Preview the Future Cloud Campus demo request form for academic tutoring and Quran Education.",form,crumbs)
+
+page("/book-a-demo/","Book a Free Demo","Plan a free demo enquiry in three simple steps: learning needs, availability and guardian contact details.",form,crumbs)
 
 PORTALS = {
     "parent": ("Parent Portal", "A clearer view of your child’s learning, from upcoming lessons to the tutor’s next recommendation.", [
@@ -417,7 +412,13 @@ extra_page("/progress/","See the next step in learning.","LEARNING & PROGRESS",
            f'<section class="shell section two-col"><div>{section_head("ILLUSTRATIVE EVALUATION","A useful update is specific.","This example shows how specific feedback can describe a learner’s next step.")}<a class="text-link" href="/parents/">Parent resources {icon("arrow")}</a></div>{progress()}</section><section class="band"><div class="shell section">{tiles([("Understanding","Can the learner explain the idea in their own words and connect it to a familiar example?"),("Independence","Can the learner choose a method and attempt a related task with less guidance?"),("Application","Can the learner use the idea in a new situation and explain the reasoning?")])}</div></section>'+cta())
 
 
+
+page("/try-a-lesson/", "Try a mini lesson", "Explore percentages or forces in a short interactive lesson with guided practice and explanations.", '<section class="shell lesson-page-heading"><span class="eyebrow">LEARNING IN ACTION</span><h1>A small idea.<br><em>A new understanding.</em></h1><p>Get a feel for explaining, practising and checking an idea.</p></section>'+lesson_body(), [("Home","/"),("Try a mini lesson","/try-a-lesson/")])
+page("/tutors/", "Tutor matching", "Find out how to discuss a tutor match for your subject, curriculum and schedule.", '<section class="shell section tutor-editorial"><div><span class="eyebrow">A HUMAN CONNECTION</span><h1>The right support starts<br>with a good fit.</h1><p>Share the subject, school course and learning goal. Use the introductory conversation to ask about the tutor’s approach and availability.</p>'+button("Discuss a tutor match")+'</div><figure><img src="/assets/pages/tutors.svg" alt="Tutor conversation with a lesson notebook" width="480" height="360"></figure></section><section class="band"><div class="shell section">'+section_head("TUTOR INTRODUCTIONS","Meet the person behind the lesson.")+tutor_cards()+'</div></section><section class="shell section">'+section_head("YOUR MATCHING CHECKLIST","Three things to discuss.")+tiles([("Course fit","Share the exact subject, school year and exam board. Ask about experience with that course."),("Teaching approach","Bring a recent question. Notice how the tutor explains, listens and checks understanding."),("Practical fit","Confirm local lesson times, the online platform, session length and fees before you enrol.")])+'</section>', [("Home","/"),("Tutor matching","/tutors/")])
+page("/reviews/", "Family feedback", "Parent feedback and learning stories shared with permission.", '<section class="shell section feedback-heading"><span class="eyebrow">FAMILY PERSPECTIVES</span><h1>Progress has<br>its own story.</h1><p>Clearer explanations. More independent practice. A better question in the next lesson.</p><figure class="feedback-art"><img src="/assets/pages/reviews.svg" alt="Family feedback and learning progress" width="480" height="360"></figure></section><section class="shell section">'+review_cards()+'</section><section class="band"><div class="shell section two-col">'+section_head("REAL EXPERIENCES","Shared with care.","Family stories are published with permission. Student names, school details and personal records stay private unless the family specifically approves their use.")+'<div class="quote-checklist"><h2>What makes feedback useful?</h2><p>The starting goal, the support that helped, and a specific next step. Every learner’s experience is individual.</p><a class="text-link" href="/progress/">Explore an illustrative progress update</a></div></div></section>', [("Home","/"),("Family feedback","/reviews/")])
+
 (DIST / ".nojekyll").touch()
-(DIST / "robots.txt").write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
-(DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f"<url><loc>{ORIGIN}{path}</loc></url>" for path in PAGES if not path.startswith("/portal"))+"</urlset>", encoding="utf-8")
-print(f"Generated {len(PAGES)} pages.")
+(DIST / "robots.txt").write_text((f"User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n" if INDEXABLE else "User-agent: *\nDisallow: /\n"), encoding="utf-8")
+(DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f"<url><loc>{ORIGIN}{path}</loc></url>" for path in PAGES if not path.startswith("/portal") and path not in ("/book-a-demo/","/privacy/","/terms/","/cookies/","/refund-cancellation/","/safeguarding/") and (path != "/tutors/" or TUTORS) and (path != "/reviews/" or REVIEWS))+"</urlset>", encoding="utf-8")
+(DIST / "assets" / "intake-config.json").write_text(json.dumps({"endpoint": CONFIG["admissions"]["endpoint"] if LIVE else "", "email": CONFIG["admissions"]["email"] if LIVE else "", "provider": CONFIG["admissions"]["provider_name"] if LIVE else "", "providerPrivacy": CONFIG["admissions"]["provider_privacy_url"] if LIVE else "", "live": LIVE}), encoding="utf-8")
+print(f"Generated {len(PAGES)} pages. Intake: {'live' if LIVE else 'preview (verified endpoint required)'}. Indexing: {INDEXABLE}")
