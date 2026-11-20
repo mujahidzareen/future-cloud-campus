@@ -1,10 +1,55 @@
 {
-  "admissions": {"endpoint":"", "email":"", "whatsapp":"", "privacy_reviewed":false, "provider_name":"", "provider_privacy_url":""},
+  "admissions": {
+    "endpoint": "",
+    "email": "",
+    "whatsapp": "",
+    "privacy_reviewed": false,
+    "provider_name": "",
+    "provider_privacy_url": ""
+  },
   "tutors": [],
   "reviews": [],
   "plans": {
-    "Weekly support": {"duration_minutes":null,"price":"","cancellation":""},
-    "Progress plan": {"duration_minutes":null,"price":"","cancellation":""},
-    "Exam focus": {"duration_minutes":null,"price":"","cancellation":""}
+    "Weekly support": {
+      "duration_minutes": null,
+      "price": "",
+      "cancellation": ""
+    },
+    "Progress plan": {
+      "duration_minutes": null,
+      "price": "",
+      "cancellation": ""
+    },
+    "Exam focus": {
+      "duration_minutes": null,
+      "price": "",
+      "cancellation": ""
+    }
+  },
+  "socials": {
+    "instagram": {
+      "url": "",
+      "verified": false
+    },
+    "facebook": {
+      "url": "",
+      "verified": false
+    },
+    "linkedin": {
+      "url": "",
+      "verified": false
+    },
+    "youtube": {
+      "url": "",
+      "verified": false
+    },
+    "tiktok": {
+      "url": "",
+      "verified": false
+    },
+    "whatsapp": {
+      "url": "",
+      "verified": false
+    }
   }
 }

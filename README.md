@@ -58,3 +58,9 @@ Populate `tutors` with objects containing `name`, `bio`, `qualification`, `subje
 Populate `reviews` with `quote`, `display_name`, `context`, `approved: true` and `publication_consent: true`. Keep student identifiers out of public quotes. There are no invented testimonials, ratings or tutor biographies in this release. Empty states explain that introductions/feedback are coming soon.
 
 For each plan, provide confirmed `duration_minutes` and `price` including currency. Confirm cancellation, rescheduling and missed-lesson terms before publishing them; the current comparison asks families to confirm these details in their quote. Four-week session counts are mathematical illustrations, not a billing commitment. The intended FCC-owned domain still requires provisioning; canonical URLs currently use the actual GitHub Pages URL.
+
+### Social channels and Quran visibility
+
+The Quran hero now sets its background and all foreground colours explicitly. This prevents shared light-page themes from combining with the previous white-on-dark text styles. Parent review sections appear on all five Quran programme pages and a direct Reviews link is in the main navigation.
+
+The homepage and footer render six native SVG social icons. In `site_content.json`, set each `socials` entry's `url` to the official profile and `verified` to `true` after confirming ownership. Supported keys are `instagram`, `facebook`, `linkedin`, `youtube`, `tiktok` and `whatsapp`. The renderer accepts HTTPS links on the corresponding platform's domains only. Unconfigured entries are labelled Coming soon and are not clickable links; no account handles or WhatsApp numbers are guessed.
