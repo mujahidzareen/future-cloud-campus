@@ -24,3 +24,9 @@
 - Verified Oman/Exam focus enquiry preselection and the sample-price note, plus Canada country preservation through the custom-package planner.
 - Confirmed six explicitly labelled review placeholders on both the homepage and Reviews page.
 - Checked 15 layouts across pricing, reviews and home at 320, 375, 768, 1024 and 1440 pixel widths with no horizontal page overflow.
+
+## Horizontal review carousel update
+- Replaced six skeleton cards with clearly labelled hypothetical parent-perspective paragraphs; no fabricated customers, ratings or results.
+- Browser verified desktop next-arrow stepping, initial/last disabled controls, position announcements and keyboard Home. Mobile next, End and ArrowLeft were exercised.
+- Checked both home and Reviews in 320, 375, 768, 1024 and 1440 pixel iframe widths: six cards present, responsive one/two/three-card views, no horizontal page overflow.
+- Native overflow supports touch/swipe. There is no autoplay; smooth scrolling respects reduced-motion and the site motion-pause control.

@@ -55,7 +55,7 @@ GitHub Pages cannot itself send email or run this receiving service. No live end
 
 Populate `tutors` with objects containing `name`, `bio`, `qualification`, `subjects` (array), `curricula` (array), `photo` (local `/assets/...` path), optional local `video` MP4, `approved: true` and `photo_consent: true`. Unapproved entries and invalid photo paths remain unpublished. The renderer escapes text. Videos use `preload="none"` behind a disclosure control.
 
-Populate `reviews` with `quote`, `display_name`, `context`, `approved: true` and `publication_consent: true`. Keep student identifiers out of public quotes. There are no invented testimonials, ratings or tutor biographies in this release. Empty states explain that introductions/feedback are coming soon.
+Populate `reviews` with `quote`, `display_name`, `context`, `approved: true` and `publication_consent: true`. Keep student identifiers out of public quotes. Sample review-style copy is explicitly labelled as illustrative and is never presented as genuine customer feedback. No fabricated identities, ratings or results are used. Tutor introductions remain pending.
 
 For each plan, provide confirmed `duration_minutes` and `price` including currency. Confirm cancellation, rescheduling and missed-lesson terms before publishing them; the current comparison asks families to confirm these details in their quote. Four-week session counts are mathematical illustrations, not a billing commitment. The intended FCC-owned domain still requires provisioning; canonical URLs currently use the actual GitHub Pages URL.
 
@@ -71,4 +71,4 @@ The homepage and footer render six native SVG social icons. In `site_content.jso
 
 The currency selector updates all three prices, totals and enquiry links. Plan, country and an illustrative-price note carry into the existing three-step booking preview. The custom-package link preserves the selected country. A compact GBP sample-pricing preview appears on the homepage.
 
-The homepage and dedicated Reviews page now show six labelled placeholder cards while no approved testimonials exist. No names, quotations, star ratings or results were invented. Once genuine consented reviews are added to the existing `reviews` configuration, the real review renderer replaces the placeholders.
+The homepage and dedicated Reviews page show six clearly labelled hypothetical parent perspectives. Each has a topic, short heading, paragraph and generic avatar, with a prominent sample-copy notice. A native horizontal carousel provides previous/next buttons, swipe/scroll, keyboard Left/Right/Home/End, position announcements and disabled end controls. It never auto-advances. Reduced-motion and paused-motion settings disable smooth scrolling. Approved consented entries in `reviews` replace sample copy automatically.

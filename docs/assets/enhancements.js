@@ -61,3 +61,56 @@ document.querySelectorAll('[data-sample-pricing]').forEach(section=>{
  };
  select.addEventListener('change',render);render();
 });
+
+// User-controlled review carousel. Native overflow remains usable without JS.
+document.querySelectorAll('[data-review-carousel]').forEach(carousel=>{
+ const track=carousel.querySelector('[data-review-track]');
+ const cards=[...track.children];
+ const controls=carousel.querySelector('[data-review-controls]');
+ const previous=carousel.querySelector('[data-review-prev]');
+ const next=carousel.querySelector('[data-review-next]');
+ const status=carousel.querySelector('[data-review-status]');
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ let frame=0,settle=0,targetIndex=null;
+ const metrics=()=>{
+  const gap=parseFloat(getComputedStyle(track).columnGap)||0;
+  const step=(cards[0]?.getBoundingClientRect().width||track.clientWidth)+gap;
+  const visible=Math.min(cards.length,Math.max(1,Math.floor((track.clientWidth+gap)/step)));
+  const start=Math.max(0,Math.min(cards.length-visible,Math.round(track.scrollLeft/step)));
+  return{step,visible,start,max:Math.max(0,track.scrollWidth-track.clientWidth)};
+ };
+ const paint=()=>{
+  frame=0;const m=metrics();controls.hidden=m.max<2;
+  previous.disabled=track.scrollLeft<2;next.disabled=track.scrollLeft>=m.max-2;
+ };
+ const announce=()=>{
+  const m=metrics(),end=Math.min(cards.length,m.start+m.visible);
+  const type=carousel.dataset.reviewSample==='true'?'Examples':'Reviews';
+  status.textContent=`${type} ${m.start+1}${end>m.start+1?'–'+end:''} of ${cards.length}`;
+ };
+ const go=index=>{
+  const m=metrics();targetIndex=Math.max(0,Math.min(cards.length-m.visible,index));
+  const left=Math.min(m.max,targetIndex*m.step);
+  track.scrollTo({left,behavior:reduced.matches||document.documentElement.classList.contains('motion-paused')?'auto':'smooth'});
+ };
+ previous.addEventListener('click',()=>go((targetIndex??metrics().start)-1));
+ next.addEventListener('click',()=>go((targetIndex??metrics().start)+1));
+ track.addEventListener('keydown',event=>{
+  if(event.target!==track)return;
+  if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){
+   event.preventDefault();
+   const current=targetIndex??metrics().start;
+   go(event.key==='Home'?0:event.key==='End'?cards.length-1:current+(event.key==='ArrowRight'?1:-1));
+  }
+ });
+ const manual=()=>{targetIndex=null;};
+ track.addEventListener('pointerdown',manual,{passive:true});
+ track.addEventListener('wheel',manual,{passive:true});
+ track.addEventListener('scroll',()=>{
+  if(!frame)frame=requestAnimationFrame(paint);
+  clearTimeout(settle);settle=setTimeout(()=>{targetIndex=null;paint();announce();},140);
+ },{passive:true});
+ if('ResizeObserver' in window)new ResizeObserver(()=>{targetIndex=null;paint();announce();}).observe(track);
+ else window.addEventListener('resize',()=>{paint();announce();},{passive:true});
+ paint();announce();
+});
