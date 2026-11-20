@@ -51,5 +51,82 @@
       "url": "",
       "verified": false
     }
+  },
+  "sample_pricing": {
+    "default_currency": "GBP",
+    "markets": [
+      {
+        "currency": "GBP",
+        "country": "United Kingdom",
+        "slug": "uk",
+        "rates": [
+          20,
+          18,
+          16
+        ]
+      },
+      {
+        "currency": "USD",
+        "country": "United States",
+        "slug": "usa",
+        "rates": [
+          20,
+          18,
+          16
+        ]
+      },
+      {
+        "currency": "AED",
+        "country": "United Arab Emirates",
+        "slug": "uae",
+        "rates": [
+          80,
+          72,
+          64
+        ]
+      },
+      {
+        "currency": "SAR",
+        "country": "Saudi Arabia",
+        "slug": "saudi-arabia",
+        "rates": [
+          85,
+          76,
+          68
+        ]
+      },
+      {
+        "currency": "QAR",
+        "country": "Qatar",
+        "slug": "qatar",
+        "rates": [
+          80,
+          72,
+          64
+        ]
+      },
+      {
+        "currency": "OMR",
+        "country": "Oman",
+        "slug": "oman",
+        "rates": [
+          8,
+          7,
+          6
+        ]
+      },
+      {
+        "currency": "CAD",
+        "country": "Canada",
+        "slug": "canada",
+        "rates": null
+      },
+      {
+        "currency": "QUOTE",
+        "country": "Other countries",
+        "slug": "other-countries",
+        "rates": null
+      }
+    ]
   }
 }

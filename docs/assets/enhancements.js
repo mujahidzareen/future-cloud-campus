@@ -34,3 +34,30 @@ if(booking){
  booking.addEventListener('submit',async event=>{event.preventDefault();if(pending||sent)return;for(let i=0;i<3;i++)if(!validStep(i))return;if(f.website.value){error.textContent='Unable to submit this request. Please reload the page and try again.';return;}pending=true;submit.disabled=true;submit.textContent='Checking your enquiry…';error.textContent='';try{await configReady;if(!config.live){showSummary();return;}const payload=Object.fromEntries(new FormData(booking));delete payload.website;payload.consent=true;payload.source='Future Cloud Campus';payload.requestId=requestId;payload.submittedAt=new Date().toISOString();const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);let response;try{response=await fetch(config.endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:controller.signal,credentials:'omit'});}finally{clearTimeout(timer);}let result;try{result=await response.json();}catch{throw new Error('unconfirmed');}if(!response.ok||result.ok!==true)throw new Error('unconfirmed');sent=true;showSummary(typeof result.reference==='string'?result.reference.slice(0,100):'');}catch{error.textContent='We could not confirm receipt of your enquiry. Your details are still here. Please try again, or copy them to contact admissions directly.';if(!booking.querySelector('[data-copy-failed]')){const copy=document.createElement('button');copy.type='button';copy.className='btn secondary';copy.dataset.copyFailed='';copy.textContent='Copy enquiry details';copy.addEventListener('click',()=>copyDetails(values().map(([k,v])=>`${k}: ${v}`).join('\n'),error));error.after(copy);}}finally{pending=false;submit.disabled=false;submit.textContent=config.live?'Send demo enquiry':'Review sample enquiry';}});
  confirmation.querySelector('[data-edit]').addEventListener('click',()=>{confirmation.hidden=true;booking.hidden=false;showStep(0);});confirmation.querySelector('[data-copy-enquiry]').addEventListener('click',()=>copyDetails(copyText,confirmation.querySelector('[data-copy-status]')));showStep(0,false);
 }
+
+// Independent example currencies; these numbers are not live offers or FX rates.
+document.querySelectorAll('[data-sample-pricing]').forEach(section=>{
+ const data=JSON.parse(section.querySelector('[data-sample-data]').textContent);
+ const select=section.querySelector('[data-sample-market]');
+ const incoming=new URLSearchParams(location.search).get('country');
+ const initial=data.markets.find(m=>m.slug===incoming);if(initial)select.value=initial.currency;
+ const format=(n,c)=>new Intl.NumberFormat('en-GB',{style:'currency',currency:c,maximumFractionDigits:0}).format(n);
+ const render=()=>{
+  const market=data.markets.find(m=>m.currency===select.value);if(!market)return;
+  section.querySelectorAll('[data-sample-card]').forEach(card=>{
+   const index=Number(card.dataset.sampleCard),count=[4,8,12][index],rate=market.rates?.[index];
+   card.querySelector('[data-sample-rate]').textContent=Number.isFinite(rate)?format(rate,market.currency):'Personal quote';
+   card.querySelector('[data-sample-currency-label]').textContent=market.rates?market.currency:'To discuss';
+   card.querySelector('.sample-unit').hidden=!market.rates;
+   card.querySelector('[data-sample-total]').textContent=Number.isFinite(rate)?format(rate*count,market.currency):'To discuss';
+   card.querySelector('.sample-total>span').textContent=market.rates?'sample four-week total':'Fees confirmed after discussing your needs';
+   const link=card.querySelector('[data-sample-enquiry]'),url=new URL(link.href);
+   url.searchParams.set('country',market.slug);url.searchParams.set('plan',link.dataset.plan);
+   url.searchParams.set('goal',`Illustrative plan: ${count} lessons over four weeks${market.rates?`, ${format(rate,market.currency)} per lesson and ${format(rate*count,market.currency)} sample total`:''}. Please confirm actual fees and lesson duration.`);
+   link.href=url.href;
+  });
+  const custom=document.querySelector('[data-sample-custom]');if(custom){const url=new URL(custom.href);url.searchParams.set('country',market.slug);custom.href=url.href;}
+  section.querySelector('[data-sample-status]').textContent=market.rates?`Showing illustrative ${market.currency} prices for ${market.country}.`:`No example prices are published for ${market.country}. Request a personal quote.`;
+ };
+ select.addEventListener('change',render);render();
+});

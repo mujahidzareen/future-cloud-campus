@@ -11,6 +11,7 @@ from artwork import ART, generate_artwork
 from additions import EXTRA_SUBJECTS, GULF_COUNTRIES, CURRICULA, LEVELS, PLANS, ARTICLES, NOTES
 from urllib.parse import urlencode
 from enhancements import CONFIG, LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards, social_icons
+from pricing_content import pricing_body, pricing_preview
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -23,7 +24,7 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js"))).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -204,6 +205,7 @@ def home():
         <a class="feature-link tilt reveal" href="/pricing/"><span class="clay-icon violet">{icon("people")}</span><h3>Find a lesson plan</h3><p>Explore weekly support and custom packages.</p>{icon("diagonal")}</a>
       </div>
     </section>
+    {pricing_preview()}
     <section class="band"><div class="shell section"><div class="section-heading-row">{section_head("THE RESOURCE ROOM","Read. Practise. Explore.")}<a class="text-link" href="/free-notes/">Free study notes {icon("arrow")}</a></div><div class="resource-teasers">{resource_teasers()}</div></div></section>
     <section class="shell section faq-grid home-faq"><div>{section_head("GOOD TO KNOW","Questions families ask.")}<a class="text-link" href="/faq/">All questions {icon("arrow")}</a></div>{accordions(FAQ[:3])}</section>
     {cta()}"""
@@ -367,11 +369,8 @@ extra_page("/learning-levels/","A plan for every school stage.","LEARNING LEVELS
            "From the first foundations to more advanced school subjects, start with what the learner needs next.",
            f'<section class="shell section"><div class="level-grid">{level_cards}</div><p class="section-footnote">School-year and grade equivalents vary. We use your school course and current level when discussing a plan.</p></section>'+cta())
 
-market_options="".join(f'<option value="{slug}">{name}</option>' for slug,name,*_ in COUNTRIES)
-plan_cards="".join(f'<article class="plan-card tilt reveal{(" recommended" if i==1 else "")}"><span class="card-kicker">{subtitle}</span><h2>{name}</h2><p class="plan-frequency">{frequency}</p><p class="plan-price">Personal quote<span>For your subject, level and schedule</span></p><ul>{"".join(f"<li>{icon("check")}{point}</li>" for point in points)}</ul><a class="btn {("primary" if i==1 else "secondary")}" data-plan-link data-plan="{name}" href="/book-a-demo/?{urlencode({"plan":name})}">Discuss this plan {icon("arrow")}</a></article>' for i,(name,subtitle,frequency,points) in enumerate(PLANS))
-extra_page("/pricing/","A lesson plan that fits.","PLANS & PRICING",
-           "Explore a regular lesson rhythm or build a package around several subjects and a specific goal.",
-           f'<section class="shell section"><div class="pricing-toolbar"><div><h2>Choose a starting point.</h2><p>Final fees and lesson details are confirmed with your quote.</p></div><label>Your location<select data-pricing-country><option value="">Choose a country</option>{market_options}</select></label></div><div class="plan-grid">{plan_cards}</div></section><section class="shell section package-banner"><div><span class="eyebrow"><i></i>FLEXIBLE PLANNING</span><h2>More than one subject?</h2><p>Combine your priorities in a custom package enquiry.</p></div>{button("Build a custom package","/custom-package/")}</section>'+cta())
+extra_page("/pricing/","Choose a rhythm. Build your confidence.","PLANS & PRICING",
+           "Explore sample four-week plans, choose your currency and discuss a quote before deciding.", pricing_body())
 
 subject_boxes="".join(f'<label class="subject-choice"><input type="checkbox" name="subjects" value="{name}" data-course="{slug}"><span>{name}</span></label>' for slug,name,*rest in SUBJECTS)
 custom=f'''<section class="shell section"><div class="package-layout">

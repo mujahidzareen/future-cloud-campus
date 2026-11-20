@@ -16,3 +16,11 @@
 - Checked 20 layouts across Quran Education, Quran Reading, Reviews and Home at 320, 375, 768, 1024 and 1440 pixel frame widths. No horizontal overflow or header item overlap was found.
 - Verified that the Reviews navigation and Quran review sections are present, and six labelled social icons render in the homepage section and global footer.
 - Empty review/social states remain explicit. Confirmed social URLs are still required to activate links; approved testimonials are still required to display reviews.
+
+## Regional pricing and six-card review update
+
+- Compared all six sample rate tables against the user-supplied ProTutors pricing page and JavaScript, including its illustrative-pricing notice.
+- Browser checked all 18 per-lesson prices and all 18 four-week totals across GBP, USD, AED, SAR, QAR and OMR. Checked Canada personal-quote fallback.
+- Verified Oman/Exam focus enquiry preselection and the sample-price note, plus Canada country preservation through the custom-package planner.
+- Confirmed six explicitly labelled review placeholders on both the homepage and Reviews page.
+- Checked 15 layouts across pricing, reviews and home at 320, 375, 768, 1024 and 1440 pixel widths with no horizontal page overflow.

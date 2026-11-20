@@ -64,3 +64,11 @@ For each plan, provide confirmed `duration_minutes` and `price` including curren
 The Quran hero now sets its background and all foreground colours explicitly. This prevents shared light-page themes from combining with the previous white-on-dark text styles. Parent review sections appear on all five Quran programme pages and a direct Reviews link is in the main navigation.
 
 The homepage and footer render six native SVG social icons. In `site_content.json`, set each `socials` entry's `url` to the official profile and `verified` to `true` after confirming ownership. Supported keys are `instagram`, `facebook`, `linkedin`, `youtube`, `tiktok` and `whatsapp`. The renderer accepts HTTPS links on the corresponding platform's domains only. Unconfigured entries are labelled Coming soon and are not clickable links; no account handles or WhatsApp numbers are guessed.
+
+### Illustrative regional pricing and six-card review layout
+
+`pricing_content.py` renders sample four-week plans of 4, 8 and 12 lessons. `site_content.json > sample_pricing` contains the independently illustrative GBP, USD, AED, SAR, QAR and OMR examples adapted from the user-supplied reference at https://protutorsonline.com/pricing/ and its `/app.js` on 20 November 2026. That reference explicitly labels its prices as samples, not live offers. FCC keeps the same distinction. These are not FX conversions or confirmed FCC fees. Canada and Other countries use a personal quote rather than invented example rates. Sample totals are lesson count multiplied by the displayed per-lesson sample; lesson duration and real terms still require confirmation.
+
+The currency selector updates all three prices, totals and enquiry links. Plan, country and an illustrative-price note carry into the existing three-step booking preview. The custom-package link preserves the selected country. A compact GBP sample-pricing preview appears on the homepage.
+
+The homepage and dedicated Reviews page now show six labelled placeholder cards while no approved testimonials exist. No names, quotations, star ratings or results were invented. Once genuine consented reviews are added to the existing `reviews` configuration, the real review renderer replaces the placeholders.

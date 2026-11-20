@@ -154,6 +154,8 @@ if (planner) {
     const destination = new URL(link.href);
     destination.search = "";
     destination.searchParams.set("plan", "Custom package");
+    const incomingCountry = new URLSearchParams(location.search).get("country");
+    if (["uk","usa","canada","uae","saudi-arabia","qatar","oman","other-countries"].includes(incomingCountry)) destination.searchParams.set("country", incomingCountry);
     destination.searchParams.set("goal", [
       selected.length ? "Subjects: " + selected.map((input) => input.value).join(", ") : "",
       goal,
