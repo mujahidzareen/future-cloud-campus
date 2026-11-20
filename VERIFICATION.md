@@ -30,3 +30,11 @@
 - Browser verified desktop next-arrow stepping, initial/last disabled controls, position announcements and keyboard Home. Mobile next, End and ArrowLeft were exercised.
 - Checked both home and Reviews in 320, 375, 768, 1024 and 1440 pixel iframe widths: six cards present, responsive one/two/three-card views, no horizontal page overflow.
 - Native overflow supports touch/swipe. There is no autoplay; smooth scrolling respects reduced-motion and the site motion-pause control.
+
+## Quran learning library update
+- Verified the imported dataset: 114 surahs and 6,236 unique sequential ayahs, complete translation/footnote fields and matching Hafs v20 WOFF2 font.
+- Browser-tested the Quran Education link into the reader, all 114 selector options, Al-Fatihah, Al-Baqarah 2:255 and 2:282, Ta-Ha 20:114, An-Nas and final-surah controls.
+- Tested previous-ayah pagination, Urdu visibility, Arabic text size, saving/resuming a reading position across reload/navigation and opening source footnotes.
+- Tested course-card navigation into Noorani Qaida, lesson selection/next, Tajweed Iqlab selection and the Islamic Studies dua link into the correct Quran ayah.
+- Checked 20 responsive layouts across all five Quran pages at 320, 375, 768 and 1440 widths with no horizontal page overflow. Checked a long ayah at the smallest reader width.
+- Reader Arabic/translation use textContent and translate=no. Source credits, translation edition and footnotes stay visible and unmodified. Data loads on demand from the same site.

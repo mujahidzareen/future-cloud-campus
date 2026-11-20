@@ -1,0 +1,5 @@
+Arabic: KFGQPC Uthmanic Hafs v20 font and matching Quran_text.csv, supplied by QuranEnc.com.
+Urdu translation: Muhammad Ibrahim Junagarhi; developed under the supervision of the Rowwad Translation Center. QuranEnc.com edition 1.1.3.
+Translated by Muhammad Ibrahim Junagarhi, developed under the supervision of the Rowwad Translation Center. The original translation is available for the purpose of expressing opinion, evaluation, and continuous development.
+Terms: https://quranenc.com/en/home/api/
+Content and footnotes are preserved unchanged. Refresh with scripts/import_quran.py before publishing updates. Report translation observations to the publisher through its source page.

@@ -12,6 +12,7 @@ from additions import EXTRA_SUBJECTS, GULF_COUNTRIES, CURRICULA, LEVELS, PLANS, 
 from urllib.parse import urlencode
 from enhancements import CONFIG, LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards, social_icons
 from pricing_content import pricing_body, pricing_preview
+from quran_learning import hub as quran_hub, workbook as quran_workbook, reader as quran_reader
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -24,7 +25,7 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -80,13 +81,14 @@ def page(path, title, description, body, crumbs=None):
     structured = [schema] if path == "/" else []
     if crumbs:
         structured.append({"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":i+1,"name":name,"item":ORIGIN+url} for i,(name,url) in enumerate(crumbs)]})
+    quran_assets = f'<link rel="stylesheet" href="/assets/quran-learning.css?v={ASSET_VERSION}"><script defer src="/assets/quran-learning.js?v={ASSET_VERSION}"></script>' if path.strip("/") in ["quran-education", "quran-reading", "noorani-qaida", "tajweed", "islamic-studies"] else ""
     structured_markup = "".join(f'<script type="application/ld+json">{json.dumps(item)}</script>' for item in structured)
     doc = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
     <title>{escape(full_title)}</title><meta name="description" content="{meta}"><meta name="theme-color" content="#f8f7ff">
     <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script>{structured_markup}
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script>{quran_assets}{structured_markup}
     </head><body class="tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
@@ -222,15 +224,15 @@ for slug,name,glyph,tone,tag,desc,topics,audience,faq in SUBJECTS:
         f'<section class="shell section">{section_head("WHAT STUDENTS LEARN",tag)}{tiles(topics)}</section><section class="band"><div class="shell section two-col">{section_head("WHO IT’S FOR","Start with the learner.",audience)}{tiles([("One-to-one lessons","The tutor explains a concept, guides a practice task and checks understanding. Discuss lesson length and platform during the demo."),("Assessment and progress","The first session helps identify the starting level. Goals and periodic evaluations guide the next lessons.")])}</div></section><section class="shell section faq-grid">{section_head("QUESTIONS",f"About {name} tutoring")}{accordions([faq, FAQ[0]])}</section>'+cta(slug),crumbs)
 
 crumbs=[("Home","/"),("Quran Education","/quran-education/")]
-quran_cards=''.join(f'<a class="subject-card quran-subject tilt reveal" href="/{slug}/"><span class="clay-icon mint">{icon("book")}</span><h3>{name}</h3><p>{desc}</p><span class="card-arrow">{icon("diagonal")}</span></a>' for slug,name,desc,_ in QURAN)
+quran_cards=''.join(f'<a class="subject-card quran-subject tilt reveal" href="/{slug}/#{("quran-reader" if slug=="quran-reading" else "learning-library")}"><span class="clay-icon mint">{icon("book")}</span><h3>{name}</h3><p>{desc}</p><span class="quran-library-link">Open learning resources</span><span class="card-arrow">{icon("diagonal")}</span></a>' for slug,name,desc,_ in QURAN)
 page("/quran-education/","Quran Education","Explore live Quran Reading, Noorani Qaida, Tajweed and Islamic Studies at Future Cloud Campus.",
     f'<section class="inner-hero quran-inner"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div><div class="eyebrow"><i></i>DEDICATED LEARNING PATH</div><h1>Quran Education</h1><p>One-to-one learning with a clear starting level, guided practice and progress updates for families.</p><div class="hero-actions">{button(href="/book-a-demo/?course=quran-education",variant="light")}</div></div>{page_illustration("/quran-education/", "quran-page-art")}</div></div></section>'
-    +f'<section class="shell section">{section_head("COURSES","Find a starting point.")}<div class="subject-grid quran-grid">{quran_cards}</div></section><section class="band"><div class="shell section">{section_head("THE LEARNING APPROACH","Assessment, practice and review.")}{tiles([("Initial placement","Discuss age, prior reading and preferred times. The teacher can check letter recognition or listen to a short reading sample."),("Teacher match","Ask admissions about teacher fit, the selection process and gender matching availability for your schedule."),("Progress feedback","Review the previous lesson, fluency and Tajweed. The evaluation can record strengths, practice areas and the recommended pace.")])}</div></section>'+cta("quran-education"),crumbs)
+    +quran_hub()+f'<section class="shell section">{section_head("COURSES","Find a starting point.")}<div class="subject-grid quran-grid">{quran_cards}</div></section><section class="band"><div class="shell section">{section_head("THE LEARNING APPROACH","Assessment, practice and review.")}{tiles([("Initial placement","Discuss age, prior reading and preferred times. The teacher can check letter recognition or listen to a short reading sample."),("Teacher match","Ask admissions about teacher fit, the selection process and gender matching availability for your schedule."),("Progress feedback","Review the previous lesson, fluency and Tajweed. The evaluation can record strengths, practice areas and the recommended pace.")])}</div></section>'+cta("quran-education"),crumbs)
 for slug,name,desc,outcomes in QURAN:
     path=f"/{slug}/"
     crumbs=[("Home","/"),("Quran Education","/quran-education/"),(name,path)]
     page(path,name,desc,hero_small("QURAN EDUCATION",name,desc,crumbs,button(href=f"/book-a-demo/?course={slug}"),"book","mint")+
-        f'<section class="shell section">{section_head("INSIDE THE LESSON","Learn at an appropriate pace.")}{tiles([("What we practise",outcomes),("Who it’s for","Share the learner’s age and previous experience. The initial assessment helps place the learner at a suitable level."),("How we review progress","The teacher checks the previous lesson, offers feedback and identifies a realistic focus for the next class.")])}</section><section class="shell section faq-grid">{section_head("QUESTIONS","Scheduling and assessment")}{accordions([FAQ[0],FAQ[2]])}</section>'+cta(slug),crumbs)
+        (quran_reader(ASSETS) if slug=="quran-reading" else quran_workbook(slug))+f'<section class="shell section">{section_head("INSIDE THE LESSON","Learn at an appropriate pace.")}{tiles([("What we practise",outcomes),("Who it’s for","Share the learner’s age and previous experience. The initial assessment helps place the learner at a suitable level."),("How we review progress","The teacher checks the previous lesson, offers feedback and identifies a realistic focus for the next class.")])}</section><section class="shell section faq-grid">{section_head("QUESTIONS","Scheduling and assessment")}{accordions([FAQ[0],FAQ[2]])}</section>'+cta(slug),crumbs)
 
 crumbs=[("Home","/"),("Countries & curricula","/countries/")]
 page("/countries/","Countries & curricula","Find curriculum and time zone guidance for families in the UK, USA, Canada and Gulf countries.",hero_small("GLOBAL LEARNING","Find guidance for your country.","Share the school curriculum, current topics and local time zone so we can discuss the right support.",crumbs,tile="globe")+f'<section class="shell section">{country_picker()}</section>'+cta(),crumbs)
