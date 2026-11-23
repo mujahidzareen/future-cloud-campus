@@ -52,3 +52,12 @@
 - Checked 15 responsive layouts across Tutors, About and Home at 320, 375, 768, 1024 and 1440 iframe widths; no horizontal page overflow. Expanded a profile at the narrowest width without overflow.
 - Visually checked the tutor hero, portrait sheets, profile disclosure and expanded About page; confirmed homepage/About each include one tutor teaser.
 - Profiles explicitly identify fictional names/illustrations and require real credentials/availability to be confirmed. The approved real-tutor configuration and noindex policy remain separate.
+
+## Profile pop-ups and CEO section
+- Replaced the card disclosure with one native dialog and twelve inert profile templates; card heights stayed identical when a profile opened.
+- Browser verified Ayaan, Omar and Hamza show their corresponding subject, portrait and lesson details. Opening a second profile replaces the first. Clicking inside the dialog leaves it open.
+- Checked close button, Escape and backdrop dismissal, restored opener focus and unlocked page scrolling. Verified forward and reverse keyboard focus wrap at 320 pixels and the enquiry link scrolls into view.
+- Combined chemistry search returns two profiles; Primary reduces this to one and reset restores all twelve.
+- Checked ten Tutors/About layouts at 320, 375, 768, 1024 and 1440 iframe widths: no horizontal page overflow. The 320px profile fits its viewport and scrolls internally without horizontal overflow.
+- Visually reviewed desktop profile and CEO layouts and 320px mobile layouts. CEO name, role, draft label and text remain readable. CEO identity uses the owner-supplied name and a monogram.
+- Rebuilt 74 pages; JavaScript syntax and local page/asset targets checked. The dialog entry animation and monogram respect reduced-motion and pause settings.
