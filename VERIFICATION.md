@@ -45,3 +45,10 @@
 - Tested mobile menu opening and Escape dismissal; course navigation; pausing classroom motion with the headline remaining visible; persistence of the pause setting when opening another page; resuming motion across navigation.
 - Tested AED sample pricing (80 / 72 / 64), Free Notes search (fractions: 1 of 12 available), homepage review next control (examples 2–4 of 6), and the Quran reader loading Al-Ikhlas with its four ayahs.
 - Reduced-motion rules are present for all new motion and page transitions. New pointer/scroll code uses event-triggered animation frames, native links and normal document scrolling; decorative motion pauses off-screen.
+
+## Twelve illustrative tutors and About FCC
+- Browser verified 12 distinct example profile cards, profile expansion, combined search/stage filtering, reset and subject-specific enquiry preselection (Chemistry).
+- Search for chemistry returns two profiles; combining Primary reduces this to the general-science example; clearing filters restores all 12.
+- Checked 15 responsive layouts across Tutors, About and Home at 320, 375, 768, 1024 and 1440 iframe widths; no horizontal page overflow. Expanded a profile at the narrowest width without overflow.
+- Visually checked the tutor hero, portrait sheets, profile disclosure and expanded About page; confirmed homepage/About each include one tutor teaser.
+- Profiles explicitly identify fictional names/illustrations and require real credentials/availability to be confirmed. The approved real-tutor configuration and noindex policy remain separate.
