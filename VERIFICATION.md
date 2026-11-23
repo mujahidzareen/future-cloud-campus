@@ -38,3 +38,10 @@
 - Tested course-card navigation into Noorani Qaida, lesson selection/next, Tajweed Iqlab selection and the Islamic Studies dua link into the correct Quran ayah.
 - Checked 20 responsive layouts across all five Quran pages at 320, 375, 768 and 1440 widths with no horizontal page overflow. Checked a long ayah at the smallest reader width.
 - Reader Arabic/translation use textContent and translate=no. Source credits, translation edition and footnotes stay visible and unmodified. Data loads on demand from the same site.
+
+## Editorial design and motion refresh
+- Checked 35 responsive layouts across home, subjects, pricing, Quran reader, demo booking, Free Notes and parent portal at 320, 375, 768, 1024 and 1440 iframe widths. Fixed a resource-title minimum-width overflow on the smallest homepage view; all tested widths have no horizontal page overflow after the fix.
+- Visually reviewed desktop/mobile hero compositions, inner-page contrast, Quran reader controls and family-review card spacing.
+- Tested mobile menu opening and Escape dismissal; course navigation; pausing classroom motion with the headline remaining visible; persistence of the pause setting when opening another page; resuming motion across navigation.
+- Tested AED sample pricing (80 / 72 / 64), Free Notes search (fractions: 1 of 12 available), homepage review next control (examples 2–4 of 6), and the Quran reader loading Al-Ikhlas with its four ayahs.
+- Reduced-motion rules are present for all new motion and page transitions. New pointer/scroll code uses event-triggered animation frames, native links and normal document scrolling; decorative motion pauses off-screen.

@@ -13,6 +13,7 @@ from urllib.parse import urlencode
 from enhancements import CONFIG, LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards, social_icons
 from pricing_content import pricing_body, pricing_preview
 from quran_learning import hub as quran_hub, workbook as quran_workbook, reader as quran_reader
+from studio_design import studio_home
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -25,7 +26,7 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -66,7 +67,7 @@ def footer():
     <div><strong>Explore</strong><a href="/subjects/">Academic subjects</a><a href="/quran-education/">Quran Education</a><a href="/curricula/">Curricula</a><a href="/test-prep/">Exam preparation</a><a href="/countries/">Countries</a></div>
     <div><strong>Families</strong><a href="/how-it-works/">How it works</a><a href="/parents/">For parents</a><a href="/pricing/">Plans &amp; pricing</a><a href="/free-notes/">Free Notes</a><a href="/faq/">FAQs</a><a href="/portal/">Parent &amp; Teacher Portal</a></div>
     <div><strong>Campus</strong><a href="/tutors/">Tutor matching</a><a href="/reviews/">Family feedback</a><a href="/try-a-lesson/">Try a mini lesson</a><a href="/about/">About FCC</a><a href="/contact/">Contact &amp; admissions</a><a href="/journal/">Blogs &amp; Articles</a><a href="/careers/">Careers</a></div></div>
-    <div class="shell footer-legal"><span>© 2026 Future Cloud Campus</span><div><a href="/privacy/">Privacy</a><a href="/cookies/">Cookies</a><a href="/terms/">Terms</a><a href="/refund-cancellation/">Cancellations</a><a href="/safeguarding/">Safeguarding</a></div></div></footer>'''
+    <div class="shell studio-footer-wordmark" aria-hidden="true">Future starts here<span>✳</span></div><div class="shell footer-legal"><span>© 2026 Future Cloud Campus</span><div><a href="/privacy/">Privacy</a><a href="/cookies/">Cookies</a><a href="/terms/">Terms</a><a href="/refund-cancellation/">Cancellations</a><a href="/safeguarding/">Safeguarding</a></div></div></footer>'''
 
 def page(path, title, description, body, crumbs=None):
     body = enrich(path, body, NOTES, ARTICLES)
@@ -88,8 +89,8 @@ def page(path, title, description, body, crumbs=None):
     <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script>{quran_assets}{structured_markup}
-    </head><body class="tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{quran_assets}{structured_markup}
+    </head><body class="studio-site{(" studio-home" if path=="/" else "")} tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
     file = DIST / path.strip("/") / "index.html"
@@ -212,7 +213,7 @@ def home():
     <section class="shell section faq-grid home-faq"><div>{section_head("GOOD TO KNOW","Questions families ask.")}<a class="text-link" href="/faq/">All questions {icon("arrow")}</a></div>{accordions(FAQ[:3])}</section>
     {cta()}"""
 
-page("/", "Future Cloud Campus | Online Tutoring & Quran Education", "Live one-to-one online tutoring and Quran Education for families. Explore academic subjects and find the right starting point with a free demo.", home())
+page("/", "Future Cloud Campus | Online Tutoring & Quran Education", "Live one-to-one online tutoring and Quran Education for families. Explore academic subjects and find the right starting point with a free demo.", studio_home(button, accordions, FAQ))
 
 crumbs = [("Home","/"),("Subjects","/subjects/")]
 page("/subjects/","Academic subjects","Explore school subjects, from mathematics and sciences to languages, humanities, business and computing.",hero_small("ACADEMIC TUTORING","Find your subject. Build your confidence.","Explore the subject library and find the right starting point for your child.",crumbs,button())+f'<section class="shell section subject-catalog" data-catalog>{catalog_filter("Find a subject", "Search subjects and learning goals")}{cards()}<p class="catalog-empty" hidden>No subjects match. Try a different word.</p></section>'+cta(),crumbs)

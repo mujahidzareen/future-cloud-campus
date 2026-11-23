@@ -90,7 +90,7 @@ def filters(notes):
     values=[('subject','Subject','All subjects',sorted({n[2] for n in notes})),('level','School stage','All stages',['Primary / Middle','Secondary']),('curriculum','Curriculum focus','All guides',['General foundations','GCSE / IGCSE'])]
     return '<div class="resource-filters">'+''.join(f'<label>{label}<select data-filter-{key}><option value="">{all_label}</option>'+''.join(f'<option value="{e(v,quote=True)}">{e(v)}</option>' for v in choices)+'</select></label>' for key,label,all_label,choices in values)+'<button class="btn secondary" type="button" data-clear-filters>Clear filters</button></div><p class="filter-help">These are topic starters. Check your school’s specification for exact course and exam requirements.</p>'
 def enrich(path,body,notes,articles):
-    if path=='/':body=body.replace('<section class="shell section faq-grid home-faq">',home_sections()+'<section class="shell section faq-grid home-faq">')
+    if path=='/' and 'data-studio-home' not in body:body=body.replace('<section class="shell section faq-grid home-faq">',home_sections()+'<section class="shell section faq-grid home-faq">')
     if path.strip('/') in ['quran-education','quran-reading','noorani-qaida','tajweed','islamic-studies']:
         section='<section class="shell section family-feedback quran-reviews"><div class="section-head"><span class="eyebrow">FAMILY PERSPECTIVES</span><h2>Parent reviews.</h2><p>Feedback from families, published with their permission.</p></div>'+review_cards(3)+'</section>'
         body=body.replace('<section class="shell final-wrap',section+'<section class="shell final-wrap',1)
