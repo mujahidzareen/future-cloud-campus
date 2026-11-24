@@ -109,3 +109,10 @@ Cards now use a denser responsive scale: four tutor columns on wide screens, thr
 The six invented review-style examples have been removed everywhere. Real approved reviews in `site_content.json` render through the existing carousel. Until those are supplied, the new photo-led panel states that approved family stories are pending; no customer quotation, rating or identity is invented. A review photograph is rendered only for a local `photo` asset plus `photo_consent: true`, in addition to the existing approval and publication consent requirements.
 
 Stock tutor photographs are visibly labelled as examples, not FCC staff. Their source list is `assets/people/STOCK-PHOTOS.md`; the Pexels CDN serves the images and requires network availability. Real staff biographies, staff portraits, genuine family reviews and the CEO's own approved portrait still require owner-provided content.
+
+### About illustration, representative portrait and six review examples
+Added a custom transparent clay learning illustration to the left column of the About campus story. Its float, rotation, orbit and pointer depth use the existing motion controls. The generated asset and prompt/source documentation are in `assets/people/STORY-ART.md`.
+
+The CEO panel now uses a male stock portrait with a visible “Stock portrait · CEO photograph pending” caption and explicit alternative text. It is not identified as a photograph of Khawaja Tahir Shafique; his own approved portrait remains necessary.
+
+Per the follow-up request, Home and Reviews again show six compact, hypothetical parent-perspective cards, with family stock-photo thumbnails, horizontal arrow controls, swipe/scroll and keyboard navigation. Quran sections show three cards. A section disclosure, each card’s example badge and its attribution state that these are illustrative design copy, not FCC customer testimonials. No invented person, rating or learner result is attributed to FCC. Approved real reviews still use the separate configured renderer and consent requirements.

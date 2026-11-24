@@ -70,3 +70,10 @@
 - Browser verified stock-portrait profile opening and Escape dismissal, roadmap jump navigation and Secondary preselection in the enquiry form. No enquiries were submitted.
 - Visually reviewed desktop tutor, CEO, feedback and roadmap layouts; mobile roadmap, feedback and CEO text remained readable. The mobile enquiry bar is shorter.
 - Rebuilt 74 pages; checked local targets, generated structure, Python compilation, JavaScript syntax and whitespace. Third-party image CDN availability remains an external dependency.
+
+## About illustration and six restored illustrative review cards
+- Checked the custom transparent 3D artwork loading beside the campus story; its CSS animation runs and the global pause control pauses it. Resume restores motion; reduced-motion, off-screen and inactive-tab rules are present.
+- Browser verified the male stock portrait loads and the visible caption says the CEO photograph is pending.
+- Home and Reviews each render six illustrative cards; the desktop Next arrow moves from examples 1–3 to 2–4, and keyboard End reaches 4–6 with Next disabled. At 320px, Next moves to example 2 without horizontal page overflow.
+- Checked 15 Home/About/Reviews layouts at 320, 375, 768, 1024 and 1440 iframe widths without horizontal page overflow. Visually checked desktop and mobile artwork, portrait and review presentation.
+- Preserved the existing approved-review configuration branch, tutor pop-ups, roadmap, resource and Quran content. No real enquiries were submitted.

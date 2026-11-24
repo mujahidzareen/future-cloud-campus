@@ -31,8 +31,10 @@ def review_carousel(cards, sample=False):
 
 def review_cards(limit=None, full=False):
     if not REVIEWS:
-        from campus_refresh import feedback_empty
-        return feedback_empty()
+        from campus_refresh import illustrative_reviews
+        amount=6 if full or limit is None else min(limit,6)
+        note='<div class="review-example-disclosure"><span class="review-disclosure-icon" aria-hidden="true">✦</span><p><strong>Illustrative review examples.</strong> These are review-style design examples, not verified FCC customer feedback. Photographs are editorial stock images.</p></div>'
+        return note+review_carousel(illustrative_reviews(amount),True)
     cards=[]
     for r in REVIEWS[:limit]:
         picture=safe_media(r.get('photo','')) if r.get('photo_consent') is True else ''
