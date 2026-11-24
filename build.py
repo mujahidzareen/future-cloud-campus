@@ -15,6 +15,7 @@ from pricing_content import pricing_body, pricing_preview
 from quran_learning import hub as quran_hub, workbook as quran_workbook, reader as quran_reader
 from studio_design import studio_home
 from campus_people import directory as faculty_directory, about_body as campus_about
+from campus_refresh import learning_roadmap
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -27,7 +28,7 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js", "campus-refresh.css")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -91,7 +92,7 @@ def page(path, title, description, body, crumbs=None):
     <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}{structured_markup}
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}<link rel="stylesheet" href="/assets/campus-refresh.css?v={ASSET_VERSION}">{structured_markup}
     </head><body class="studio-site{(" studio-home" if path=="/" else "")} tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
@@ -369,10 +370,8 @@ extra_page("/test-prep/","Prepare with a clear focus.","EXAMS & ASSESSMENTS",
            "Choose the assessment, identify the gaps and make each practice session count.",
            f'<section class="shell section"><div class="exam-grid">{exam_cards}</div><p class="section-footnote">Share the exact exam, course and target date so admissions can check tutor availability.</p></section><section class="band"><div class="shell section">{section_head("A PRACTICE CYCLE","Review. Practise. Return.")}{tiles([("Find the gap","Start with a recent answer and locate the first step that needs attention."),("Practise the skill","Use a guided example, then attempt a related question independently."),("Return and review","Revisit the idea and use the result to choose the next priority.")])}</div></section>'+cta())
 
-level_cards="".join(f'<article class="level-card tilt reveal"><span class="level-index">0{i}</span><span class="card-kicker">{level}</span><h3>{title}</h3><p>{desc}</p><a class="text-link" href="/book-a-demo/?{urlencode({"level":level})}">Discuss this level {icon("diagonal")}</a></article>' for i,(level,title,desc) in enumerate(LEVELS,1))
-extra_page("/learning-levels/","A plan for every school stage.","LEARNING LEVELS",
-           "From the first foundations to more advanced school subjects, start with what the learner needs next.",
-           f'<section class="shell section"><div class="level-grid">{level_cards}</div><p class="section-footnote">School-year and grade equivalents vary. We use your school course and current level when discussing a plan.</p></section>'+cta())
+extra_page("/learning-levels/","A learning journey that grows with you.","LEARNING LEVELS",
+           "From first foundations to advanced school study. Explore the stages and find your child’s next step.", learning_roadmap(LEVELS))
 
 extra_page("/pricing/","Choose a rhythm. Build your confidence.","PLANS & PRICING",
            "Explore sample four-week plans, choose your currency and discuss a quote before deciding.", pricing_body())
@@ -419,7 +418,7 @@ extra_page("/progress/","See the next step in learning.","LEARNING & PROGRESS",
 
 page("/try-a-lesson/", "Try a mini lesson", "Explore percentages or forces in a short interactive lesson with guided practice and explanations.", '<section class="shell lesson-page-heading"><span class="eyebrow">LEARNING IN ACTION</span><h1>A small idea.<br><em>A new understanding.</em></h1><p>Get a feel for explaining, practising and checking an idea.</p></section>'+lesson_body(), [("Home","/"),("Try a mini lesson","/try-a-lesson/")])
 page("/tutors/", "Tutors & learning profiles", "Explore clearly labelled illustrative tutor profiles by subject and learning stage, and prepare for a tutor-matching conversation.", faculty_directory(button), [("Home","/"),("Tutors","/tutors/")])
-page("/reviews/", "Parent reviews", "Parent feedback and learning stories shared with permission.", '<section class="shell section feedback-heading"><span class="eyebrow">FAMILY PERSPECTIVES</span><h1>A space for<br>family feedback.</h1><p>Explore sample parent perspectives while we prepare to share genuine family feedback.</p><figure class="feedback-art"><img src="/assets/pages/reviews.svg" alt="Family feedback and learning progress" width="480" height="360"></figure></section><section class="shell section">'+review_cards(full=True)+'</section><section class="band"><div class="shell section two-col">'+section_head("REAL EXPERIENCES","Shared with care.","Family stories are published with permission. Student names, school details and personal records stay private unless the family specifically approves their use.")+'<div class="quote-checklist"><h2>What makes feedback useful?</h2><p>The starting goal, the support that helped, and a specific next step. Every learner’s experience is individual.</p><a class="text-link" href="/progress/">Explore an illustrative progress update</a></div></div></section>', [("Home","/"),("Family feedback","/reviews/")])
+page("/reviews/", "Parent reviews", "Parent feedback and learning stories shared with permission.",  '<section class="shell section feedback-heading feedback-heading-compact"><span class="eyebrow">FAMILY FEEDBACK</span><h1>Small breakthroughs.<br>Meaningful stories.</h1><p>Learning feels personal because it is. A space for families to share what helped along the way.</p></section><section class="shell feedback-page-content">'+review_cards(full=True)+'</section><section class="shell section feedback-values"><article><span>01</span><h2>Every voice has a place.</h2><p>What felt clearer? What made practice easier? The most useful feedback starts with a real moment.</p></article><article><span>02</span><h2>Shared with permission.</h2><p>Families choose what to share. Personal student details remain private unless explicitly approved.</p></article><article><span>03</span><h2>A conversation that continues.</h2><p>Feedback helps shape the next learning goal and the support a learner needs.</p></article></section>' , [("Home","/"),("Family feedback","/reviews/")])
 
 (DIST / ".nojekyll").touch()
 (DIST / "robots.txt").write_text((f"User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n" if INDEXABLE else "User-agent: *\nDisallow: /\n"), encoding="utf-8")

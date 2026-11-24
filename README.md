@@ -100,3 +100,12 @@ Portrait assets and prompt documentation are in `docs/assets/people/` for GitHub
 “View profile details” opens the selected example in one shared native dialog without expanding the card. It includes the corresponding portrait, subject, lesson content and enquiry link, a persistent close button, Escape and backdrop dismissal, keyboard focus wrapping, focus return, background scroll locking and internal scrolling on small screens. Profile search includes the content moved into inert templates. Without JavaScript the subject enquiry links remain available.
 
 About FCC includes a CEO section naming Khawaja Tahir Shafique (provided by the site owner), with a decorative KTS monogram. The original welcome copy is visibly labelled “Draft message · prepared for approval”; replace it with approved wording in `campus_people.py` when available. No CEO photograph, personal history or signature was invented.
+
+### Compact campus refresh
+Cards now use a denser responsive scale: four tutor columns on wide screens, three/two at intermediate widths, one on phones. Tutor descriptions stay in the existing accessible profile pop-up; each card keeps a concise subject/stage summary. Home subject/resource cards, general card padding and the mobile enquiry bar are smaller.
+
+`campus_refresh.py` and `assets/campus-refresh.css` own the learning roadmap, photo-source helper and photographic feedback panel. The Learning Levels roadmap has four connected stages, jump links and stage-specific enquiry preselection. About FCC keeps the CEO identity below an editorial learning image on the left and a shorter draft message on the right; this is not a CEO portrait.
+
+The six invented review-style examples have been removed everywhere. Real approved reviews in `site_content.json` render through the existing carousel. Until those are supplied, the new photo-led panel states that approved family stories are pending; no customer quotation, rating or identity is invented. A review photograph is rendered only for a local `photo` asset plus `photo_consent: true`, in addition to the existing approval and publication consent requirements.
+
+Stock tutor photographs are visibly labelled as examples, not FCC staff. Their source list is `assets/people/STOCK-PHOTOS.md`; the Pexels CDN serves the images and requires network availability. Real staff biographies, staff portraits, genuine family reviews and the CEO's own approved portrait still require owner-provided content.

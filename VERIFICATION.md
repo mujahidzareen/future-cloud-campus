@@ -61,3 +61,12 @@
 - Checked ten Tutors/About layouts at 320, 375, 768, 1024 and 1440 iframe widths: no horizontal page overflow. The 320px profile fits its viewport and scrolls internally without horizontal overflow.
 - Visually reviewed desktop profile and CEO layouts and 320px mobile layouts. CEO name, role, draft label and text remain readable. CEO identity uses the owner-supplied name and a monogram.
 - Rebuilt 74 pages; JavaScript syntax and local page/asset targets checked. The dialog entry animation and monogram respect reduced-motion and pause settings.
+
+## Compact cards, photographs and learning roadmap
+- Tutor cards measured 499px high in a four-column desktop grid (previously about 879px); all twelve cards align. Pop-up details remain separate from card size.
+- All twelve 900px tutor stock photographs loaded in the browser; the family-learning photo and CEO-section study photo loaded at 1000px. Stock-photo disclaimers remain visible; no stock person is presented as FCC staff, a customer or the CEO.
+- Removed all six sample review-style quotations and “Sample copy” badges. Home, Reviews and Quran pages share a professional photo-led feedback panel while genuine approved reviews remain pending. Existing real-review carousel rendering is preserved.
+- Checked 25 Home/Tutors/Reviews/About/Learning Levels layouts at 320, 375, 768, 1024 and 1440 iframe widths without horizontal page overflow. Rechecked mobile About after scrolling and fixed the older course-card minimum-width overflow.
+- Browser verified stock-portrait profile opening and Escape dismissal, roadmap jump navigation and Secondary preselection in the enquiry form. No enquiries were submitted.
+- Visually reviewed desktop tutor, CEO, feedback and roadmap layouts; mobile roadmap, feedback and CEO text remained readable. The mobile enquiry bar is shorter.
+- Rebuilt 74 pages; checked local targets, generated structure, Python compilation, JavaScript syntax and whitespace. Third-party image CDN availability remains an external dependency.

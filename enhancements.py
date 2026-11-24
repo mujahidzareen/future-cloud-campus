@@ -30,21 +30,14 @@ def review_carousel(cards, sample=False):
     return f'''<div class="review-carousel" data-review-carousel data-review-sample="{str(sample).lower()}" role="region" aria-roledescription="carousel" aria-label="{label}"><div class="review-carousel-toolbar"><p class="review-carousel-status" data-review-status role="status" aria-live="polite">{len(cards)} {count_label}</p><div class="review-carousel-controls" data-review-controls hidden><button class="btn secondary review-arrow" type="button" data-review-prev aria-label="Previous reviews" aria-controls="{track_id}" disabled><span aria-hidden="true">&lt;</span></button><button class="btn secondary review-arrow" type="button" data-review-next aria-label="Next reviews" aria-controls="{track_id}"><span aria-hidden="true">&gt;</span></button></div></div><div class="review-track review-grid" id="{track_id}" data-review-track tabindex="0" role="group" aria-label="Review cards. Use the left and right arrow keys to browse.">{''.join(cards)}</div><p class="review-carousel-hint">Swipe, scroll, or use the &lt; and &gt; buttons to explore.</p></div>'''
 
 def review_cards(limit=None, full=False):
-    if not REVIEWS and (full or limit == 6):
-        examples=[
-            ('Mathematics','Clear steps. Time to try.','We’d look for a tutor who explains why a method works, checks understanding and leaves time to try the next question independently. A patient, step-by-step approach would matter to our family.'),
-            ('English','Space to find the words.','A lesson that gives a learner time to speak, plan an answer and revise a sentence would matter to us. Helpful feedback should make the next writing task feel manageable.'),
-            ('Science','Connect the idea to the answer.','We’d value everyday examples, careful use of diagrams and questions that connect an idea to a calculation. Understanding the reason behind an answer would be our priority.'),
-            ('Quran Education','A thoughtful learning pace.','Patience, respectful correction and a pace suited to the learner would be important to us. A clear focus for practice between lessons would help us support learning at home.'),
-            ('Exam preparation','A clearer revision focus.','A short list of revision priorities would be more useful to us than trying to cover everything at once. We’d look for guided question practice and feedback on the steps that need work.'),
-            ('For families','Know what comes next.','We’d want to know what was covered, what needs another look and what comes next. Clear communication and agreed lesson times would help us plan around school.')]
-        cards=[f'''<figure class="review-card review-example info-card tilt"><div class="review-example-top"><span class="review-example-topic">{e(topic)}</span><span class="review-example-badge">Sample copy</span></div><span class="review-quote-mark" aria-hidden="true">“</span><h3>{e(title)}</h3><blockquote>{e(copy)}</blockquote><figcaption><span class="review-example-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span><div><strong>Illustrative parent perspective</strong><span>Example text · not a customer review</span></div></figcaption></figure>''' for topic,title,copy in examples]
-        return '<div class="review-layout-note"><strong>Illustrative review examples.</strong><p>This is sample review-style copy for the website preview, not verified feedback from real customers. Genuine family reviews will replace these examples once supplied and approved.</p></div>'+review_carousel(cards,True)
     if not REVIEWS:
-        href='/book-a-demo/' if full else '/reviews/'
-        label='Discuss your learning goals' if full else 'About parent reviews'
-        return f'''<div class="reviews-empty"><div class="review-emblem" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M10 8h28a7 7 0 0 1 7 7v16a7 7 0 0 1-7 7H23l-12 8v-8h-1a7 7 0 0 1-7-7V15a7 7 0 0 1 7-7Z"/><path d="M14 20h20M14 27h14"/></svg></div><div class="reviews-empty-copy"><span class="review-status">PARENT VOICES · COMING SOON</span><h3>Your family’s story belongs here.</h3><p>Reviews will appear here once families share their feedback and approve it for publication. No parent reviews have been published yet.</p></div><a class="btn secondary" href="{href}">{label}</a></div>'''
-    cards=[f'<figure class="review-card info-card tilt"><span class="review-quote-mark" aria-hidden="true">“</span><blockquote>{e(r["quote"])}</blockquote><figcaption><strong>{e(r["display_name"])}</strong><span>{e(r["context"])}</span></figcaption></figure>' for r in REVIEWS[:limit]]
+        from campus_refresh import feedback_empty
+        return feedback_empty()
+    cards=[]
+    for r in REVIEWS[:limit]:
+        picture=safe_media(r.get('photo','')) if r.get('photo_consent') is True else ''
+        avatar=f'<img class="review-parent-photo" src="{e(picture,quote=True)}" alt="{e(r["display_name"],quote=True)}" width="48" height="48" loading="lazy">' if picture else '<span class="review-parent-initial" aria-hidden="true">'+e(r['display_name'][0].upper())+'</span>'
+        cards.append(f'<figure class="review-card info-card tilt"><span class="review-quote-mark" aria-hidden="true">“</span><blockquote>{e(r["quote"])}</blockquote><figcaption>{avatar}<div><strong>{e(r["display_name"])}</strong><span>{e(r["context"])}</span></div></figcaption></figure>')
     return review_carousel(cards)
 
 SOCIAL_CHANNELS=[('instagram','Instagram','#ad3b82'),('facebook','Facebook','#2460bb'),('linkedin','LinkedIn','#176ba1'),('youtube','YouTube','#c43636'),('tiktok','TikTok','#263b46'),('whatsapp','WhatsApp','#23785a')]
