@@ -64,12 +64,14 @@ def social_icons(compact=False):
         svg=f'<svg class="social-glyph" viewBox="0 0 24 24" aria-hidden="true">{SOCIAL_SVGS[key]}</svg>'
         content=svg+f'<span class="social-label">{label}</span>'
         if url: item=f'<a class="social-link" href="{e(url,quote=True)}" target="_blank" rel="noopener noreferrer" aria-label="{label} (opens in a new tab)" style="--social-color:{color}">{content}</a>'
-        else: item=f'<span class="social-link is-pending" role="img" aria-label="{label} link coming soon" title="{label} link coming soon" style="--social-color:{color}">{content}<span class="social-pending">Coming soon</span></span>'
+        else: continue
         items.append('<li>'+item+'</li>')
-    note='Official FCC links are being added.' if not any(verified_social(key) for key,_,_ in SOCIAL_CHANNELS) else 'Choose an official Future Cloud Campus channel.'
+    if not items: return ''
+    note='Choose an official Future Cloud Campus channel.'
     return f'<div class="social-block{(" social-compact" if compact else "")}"><ul class="social-links" aria-label="Future Cloud Campus social channels">'+''.join(items)+f'</ul><p class="social-note">{note}</p></div>'
 
 def social_section():
+    if not social_icons(): return ''
     return '<section class="shell section campus-social"><div class="section-head"><span class="eyebrow">BEYOND THE CLASSROOM</span><h2>Stay close to campus.</h2><p>Find our social channels for learning ideas, campus updates and ways to connect.</p></div>'+social_icons()+'</section>'
 
 def home_sections():
@@ -79,7 +81,7 @@ def lesson_body():
 def pricing_details():
     names=['Weekly support','Progress plan','Exam focus']
     def row(title,values):return '<tr><th scope="row">'+title+'</th>'+''.join('<td>'+e(str(v))+'</td>' for v in values)+'</tr>'
-    rows=row('Lesson rhythm',['Once a week','Twice a week','Agreed around your goal'])+row('Sessions over four weeks',['4 if held every week','8 if held every week','Confirmed in your plan'])+row('Learning focus',['One main topic or subject','Explanation and follow-up practice','Topic priorities and exam practice'])+row('Session length',[(str(CONFIG['plans'][n]['duration_minutes'])+' minutes') if CONFIG['plans'][n]['duration_minutes'] else 'Confirm in your quote' for n in names])+row('Fees',[CONFIG['plans'][n]['price'] or 'Personal quote' for n in names])
+    rows=row('Example lesson rhythm',['Once a week','Twice a week','Three times a week'])+row('Example sessions over four weeks',['4','8','12'])+row('Learning focus',['One main topic or subject','Explanation and follow-up practice','Topic priorities and exam practice'])+row('Session length',[(str(CONFIG['plans'][n]['duration_minutes'])+' minutes') if CONFIG['plans'][n]['duration_minutes'] else 'Confirm in your quote' for n in names])+row('Fees',[CONFIG['plans'][n]['price'] or 'Personal quote' for n in names])+row('Lesson format',['One-to-one online']*3)+row('Cancellation & rescheduling',[CONFIG['plans'][n]['cancellation'] or 'Confirm in your quote' for n in names])
     return '<section class="shell section plan-details"><div class="section-head"><span class="eyebrow">KNOW WHAT YOU’RE CHOOSING</span><h2>A clearer conversation about lessons.</h2><p>Use these details to compare your options before agreeing on a plan.</p></div><div class="comparison-scroll" tabindex="0" role="region" aria-label="Lesson plan comparison"><table class="plan-comparison"><thead><tr><th scope="col">Detail</th>'+''.join('<th scope="col">'+n+'</th>' for n in names)+'</tr></thead><tbody>'+rows+'</tbody></table></div><div class="quote-checklist"><h3>Before you enrol</h3><p>Confirm the tutor, lesson length, platform, time zone, total fee and currency. Ask for the notice period for cancellations, rescheduling and missed lessons before agreeing to a plan.</p><span class="small-copy">The four-week examples show session counts, not a monthly billing promise. Fees and cancellation arrangements are confirmed individually.</span></div></section>'
 def filters(notes):
     values=[('subject','Subject','All subjects',sorted({n[2] for n in notes})),('level','School stage','All stages',['Primary / Middle','Secondary']),('curriculum','Curriculum focus','All guides',['General foundations','GCSE / IGCSE'])]
@@ -87,7 +89,7 @@ def filters(notes):
 def enrich(path,body,notes,articles):
     if path=='/' and 'data-studio-home' not in body:body=body.replace('<section class="shell section faq-grid home-faq">',home_sections()+'<section class="shell section faq-grid home-faq">')
     if path.strip('/') in ['quran-education','quran-reading','noorani-qaida','tajweed','islamic-studies']:
-        section='<section class="shell section family-feedback quran-reviews"><div class="section-head"><span class="eyebrow">FAMILY PERSPECTIVES</span><h2>Parent reviews.</h2><p>Feedback from families, published with their permission.</p></div>'+review_cards(3)+'</section>'
+        section='<section class="shell section family-feedback quran-reviews"><div class="section-head"><span class="eyebrow">FAMILY PERSPECTIVES</span><h2>Parent reviews.</h2><p>Explore the family perspective. Approved feedback will be published with permission.</p></div>'+review_cards(3)+'</section>'
         body=body.replace('<section class="shell final-wrap',section+'<section class="shell final-wrap',1)
 
     if path=='/free-notes/':

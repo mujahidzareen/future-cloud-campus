@@ -77,3 +77,13 @@
 - Home and Reviews each render six illustrative cards; the desktop Next arrow moves from examples 1–3 to 2–4, and keyboard End reaches 4–6 with Next disabled. At 320px, Next moves to example 2 without horizontal page overflow.
 - Checked 15 Home/About/Reviews layouts at 320, 375, 768, 1024 and 1440 iframe widths without horizontal page overflow. Visually checked desktop and mobile artwork, portrait and review presentation.
 - Preserved the existing approved-review configuration branch, tutor pop-ups, roadmap, resource and Quran content. No real enquiries were submitted.
+
+## Focused homepage and interactive learning pathways — 26 November 2026
+- Browser verified the clearer hero, primary demo CTA and eight-section homepage journey; four compact subject cards retain real course links.
+- Tested all four learning-stage choices and all four curriculum choices in the pathway picker, curriculum guide destinations, foundation/secondary resource switching, roadmap highlighting and the Higher secondary / Matric & Intermediate enquiry preselection.
+- Confirmed the chosen stage, curriculum and goal appear in the booking fields; progressed through Learning, Availability and Contact. Live intake remains disabled and visibly labelled as a preview.
+- Measured 20 iframe layouts across Home, Learning Levels, Pricing and About at 320, 375, 768, 1024 and 1440 CSS-pixel frame widths: no horizontal page overflow. The comparison table retains its own small-screen scroller.
+- Tested mobile menu open/Escape, global animation pause/resume, continued header-logo rotation and review next-arrow movement to examples 2–4 of 6.
+- Verified the local compressed heading font loads; size reduced from 136,676 to 63,324 bytes. No field performance score was measured.
+- Existing six illustrative review cards, stock-photo labels, tutor profile dialogs, About sculpture/CEO message, Quran resources and portal Coming Soon pages remain. Inactive social links are now omitted.
+- Confirmed pricing comparison uses labelled example frequency/count and quote-required actual fees, duration and cancellation terms. User requested continuing the remaining work without supplying business details.

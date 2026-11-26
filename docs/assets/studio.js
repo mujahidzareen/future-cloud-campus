@@ -37,3 +37,25 @@
  motionButton?.addEventListener('click',motionChanged);reduce.addEventListener('change',motionChanged);fine.addEventListener('change',motionChanged);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){moves.forEach(reset=>reset());halo?.classList.remove('is-visible');}});
 })();
+
+// Pathway choices update real destinations; enquiries retain the selected context.
+document.querySelectorAll('[data-pathway-picker]').forEach(picker=>{
+ const data=JSON.parse(picker.querySelector('[data-pathway-data]').textContent),stage=picker.querySelector('[data-pathway-stage]'),curriculum=picker.querySelector('[data-pathway-curriculum]');
+ const enquiry=picker.querySelector('[data-pathway-enquiry]'),guide=picker.querySelector('[data-pathway-guide]'),resources=picker.querySelector('[data-pathway-resources]');
+ const base=new URL('../',picker.querySelector('[data-pathway-maths]').href);
+ const render=(announce=false)=>{
+  const selected=data.stages[Number(stage.value)],course=data.curricula[Number(curriculum.value)];
+  picker.querySelector('[data-pathway-context]').textContent=`${selected.name} · ${course.name}`;
+  picker.querySelector('[data-pathway-heading]').textContent=selected.title;
+  picker.querySelector('[data-pathway-description]').textContent=selected.description;
+  picker.querySelector('[data-pathway-course]').textContent=course.description;
+  const url=new URL('book-a-demo/',base);url.searchParams.set('level',selected.name);url.searchParams.set('curriculum',course.name);url.searchParams.set('goal',`Explore ${selected.name.toLowerCase()} support. Confirm the school course and current topics.`);enquiry.href=url.href;
+  guide.href=new URL(`curricula/${course.slug}/`,base).href;guide.textContent=`${course.name} guide`;
+  const advanced=Number(stage.value)>1;
+  resources.href=new URL(advanced?'free-notes/':'try-a-lesson/',base).href;resources.textContent=advanced?'Explore topic guides':'Try a foundation activity';
+  picker.querySelector('[data-pathway-roadmap]').href=`#stage-${Number(stage.value)+1}`;
+  document.querySelectorAll('.roadmap-step').forEach((item,i)=>item.classList.toggle('is-pathway-selected',i===Number(stage.value)));
+  if(announce)picker.querySelector('[data-pathway-status]').textContent=`Showing ${selected.name}, ${course.name}. Subject links, learning resources and enquiry are ready.`;
+ };
+ stage.addEventListener('change',()=>render(true));curriculum.addEventListener('change',()=>render(true));render();
+});

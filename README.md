@@ -8,7 +8,7 @@ Review version of the Future Cloud Campus website. The Parent and Teacher Portal
 - `additions.py` holds new subjects, curricula, plans, articles and the original study-guide text.
 - `notes_pdf.py` builds the 12 downloadable topic PDFs using ReportLab and DejaVu Sans fonts. After editing a guide, run `python -B notes_pdf.py docs` in the GitHub repository, then run the normal HTML build.
 - `artwork.py` creates a distinct vector illustration for each of the 70 inner pages.
-- `build.py` renders 71 HTML pages, metadata, the preview robots policy and sitemap.
+- `build.py` renders 74 HTML pages, metadata, the preview robots policy and sitemap.
 - `dist/assets/` contains original logo files, SVG illustrations, CSS and JavaScript.
 - Run `python -B build.py` from the root to regenerate pages. Set `FCC_ORIGIN` to override the canonical origin. Serve `dist/` over HTTP for local testing.
 - The stylesheet implements the rotating header logo, lesson illustration, clay surfaces, scroll reveals and reduced-motion fallback. The Inter font and its license are stored in assets/fonts. No third-party frontend packages are required.
@@ -63,7 +63,7 @@ For each plan, provide confirmed `duration_minutes` and `price` including curren
 
 The Quran hero now sets its background and all foreground colours explicitly. This prevents shared light-page themes from combining with the previous white-on-dark text styles. Parent review sections appear on all five Quran programme pages and a direct Reviews link is in the main navigation.
 
-The homepage and footer render six native SVG social icons. In `site_content.json`, set each `socials` entry's `url` to the official profile and `verified` to `true` after confirming ownership. Supported keys are `instagram`, `facebook`, `linkedin`, `youtube`, `tiktok` and `whatsapp`. The renderer accepts HTTPS links on the corresponding platform's domains only. Unconfigured entries are labelled Coming soon and are not clickable links; no account handles or WhatsApp numbers are guessed.
+The homepage and footer render native SVG icons for configured official social channels. In `site_content.json`, set each `socials` entry's `url` to the official profile and `verified` to `true` after confirming ownership. Supported keys are `instagram`, `facebook`, `linkedin`, `youtube`, `tiktok` and `whatsapp`. The renderer accepts HTTPS links on the corresponding platform's domains only. Unconfigured channels are omitted; no account handles or WhatsApp numbers are guessed.
 
 ### Illustrative regional pricing and six-card review layout
 
@@ -116,3 +116,13 @@ Added a custom transparent clay learning illustration to the left column of the 
 The CEO panel now uses a male stock portrait with a visible “Stock portrait · CEO photograph pending” caption and explicit alternative text. It is not identified as a photograph of Khawaja Tahir Shafique; his own approved portrait remains necessary.
 
 Per the follow-up request, Home and Reviews again show six compact, hypothetical parent-perspective cards, with family stock-photo thumbnails, horizontal arrow controls, swipe/scroll and keyboard navigation. Quran sections show three cards. A section disclosure, each card’s example badge and its attribution state that these are illustrative design copy, not FCC customer testimonials. No invented person, rating or learner result is attributed to FCC. Approved real reviews still use the separate configured renderer and consent requirements.
+
+### Focused homepage and interactive pathways — 26 November 2026
+
+The homepage now follows subjects → three lesson steps → tutors → Quran learning → family perspectives → illustrative pricing → FAQ and demo invitation. The clearer hero uses “Personal online tutoring. A clearer path forward.” with Book a Free Demo as the primary action. The rotating header logo, floating classroom and About illustration remain; secondary spinning decorations, the marquee and cursor halo have been removed from this journey. Hover depth and colour changes remain, with pause and reduced-motion support.
+
+Learning Levels includes native stage/curriculum selectors, context-specific resource links, curriculum guides and an enquiry link that carries both choices into the existing form. All roadmap stages remain visible, and the chosen stage is highlighted. Without JavaScript, the stage navigation and default enquiry remain usable. Route generation preserves GitHub Pages subdirectory links.
+
+Pricing now includes a comparison table for example frequency/count, focus, confirmed session length/fees when supplied, one-to-one format, and cancellation terms. Unconfirmed details request a personal quote. Official social links render only after configuration/verification. The booking form remains an explicit preview until the existing admissions activation requirements are satisfied. Real portraits and reviews still require approved source material.
+
+Space Grotesk uses a local WOFF file (63,324 bytes versus the original 136,676-byte TTF), with its existing OFL license. No measured page-speed or Core Web Vitals score is claimed.
