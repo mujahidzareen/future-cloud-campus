@@ -67,3 +67,44 @@
   root.classList.remove('campus-motion-ready');nodes.forEach(reveal);scenes.forEach((_,node)=>clearScene(node));
  }
 })();
+
+// Original orbital chapters and a continuous roadmap. No scroll hijacking or animation library.
+(()=>{
+ const root=document.documentElement,main=document.querySelector('main');if(!main||!('IntersectionObserver' in window))return;
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)'),wide=matchMedia('(min-width: 900px)'),fine=matchMedia('(hover:hover) and (pointer:fine)');
+ const chapters=[...main.querySelectorAll('.discovery-subjects,.discovery-lesson,.discovery-quran,.discovery-feedback,.campus-story,.learning-roadmap')];
+ const active=new Set(),resets=[];let frame=0;
+ const paused=()=>reduce.matches||root.classList.contains('motion-paused')||document.hidden;
+ const clamp=value=>Math.max(0,Math.min(1,value));
+ const paint=()=>{
+  frame=0;if(paused())return;
+  active.forEach(node=>{
+   const box=node.getBoundingClientRect(),height=innerHeight;
+   const progress=clamp((height-box.top)/(height+box.height));
+   node.style.setProperty('--chapter-progress',progress.toFixed(4));
+   node.style.setProperty('--orbit-phase',`${((progress-.5)*(wide.matches?100:35)).toFixed(2)}deg`);
+   node.style.setProperty('--chapter-curve',`${(50-Math.sin(progress*Math.PI)*27).toFixed(1)}px`);
+   if(node.matches('.learning-roadmap')){
+    node.style.setProperty('--road-progress',String(clamp((height*.6-box.top-24)/(box.height-24))));
+    node.querySelectorAll('.roadmap-step').forEach(step=>step.classList.toggle('is-milestone-reached',step.getBoundingClientRect().top<height*.6));
+   }
+  });
+ };
+ const schedule=()=>{if(!frame&&!paused())frame=requestAnimationFrame(paint);};
+ const view=new IntersectionObserver(entries=>{entries.forEach(({target,isIntersecting})=>{if(isIntersecting)active.add(target);else active.delete(target);});schedule();},{rootMargin:'100px'});
+ chapters.forEach(node=>{node.dataset.campusChapter='';view.observe(node);});
+ const excluded='.discovery-hero,.studio-hero,dialog,form,[data-quran-reader],.quran-library,[data-learning-workbook],[data-lesson],[data-lesson-peek],.article-body,.reading-panel,.reader-layout,.portal-main';
+ main.querySelectorAll('.discovery-subject,.discovery-resource,.subject-card,.resource-card,.story-card,.plan-card,.faculty-card,.campus-offer-grid>a,.campus-values-grid>article,.campus-next-grid>a,.roadmap-card,.pricing-preview-card,.review-card').forEach(node=>{
+  if(node.closest(excluded))return;node.dataset.campusSurface='';let raf=0,x=50,y=30,box;
+  const clear=()=>{if(raf)cancelAnimationFrame(raf);raf=0;node.style.removeProperty('--surface-x');node.style.removeProperty('--surface-y');};resets.push(clear);
+  node.addEventListener('pointerenter',()=>{box=node.getBoundingClientRect();},{passive:true});
+  node.addEventListener('pointermove',event=>{if(paused()||!fine.matches||!box)return;x=clamp((event.clientX-box.left)/box.width)*100;y=clamp((event.clientY-box.top)/box.height)*100;if(!raf)raf=requestAnimationFrame(()=>{raf=0;node.style.setProperty('--surface-x',`${x.toFixed(1)}%`);node.style.setProperty('--surface-y',`${y.toFixed(1)}%`);});},{passive:true});
+  node.addEventListener('pointerleave',clear,{passive:true});node.addEventListener('pointercancel',clear,{passive:true});
+ });
+ main.querySelectorAll('.btn').forEach(node=>{if(!node.closest(excluded))node.dataset.campusButton='';});
+ const sync=()=>{if(paused()){if(frame)cancelAnimationFrame(frame);frame=0;resets.forEach(reset=>reset());}else schedule();};
+ addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule,{passive:true});
+ if('ResizeObserver' in window)new ResizeObserver(schedule).observe(main);
+ new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class']});
+ reduce.addEventListener('change',sync);wide.addEventListener('change',sync);fine.addEventListener('change',sync);document.addEventListener('visibilitychange',sync);sync();
+})();
