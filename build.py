@@ -62,14 +62,15 @@ def nav(path):
         return f'<a href="{url}"{(" aria-current=page" if path == url else "")}>{label}</a>'
     def dropdown(label, links):
         return f'<details class="nav-dropdown"><summary>{label}<span aria-hidden="true">⌄</span></summary><div class="nav-popover">{"".join(link(url, text) for url, text in links)}</div></details>'
-    items = dropdown("Learning", [("/subjects/", "All subjects"), ("/learning-levels/", "Learning levels"), ("/curricula/", "Curricula"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress")])
+    items = link("/", "Home")
+    items += dropdown("Learning", [("/subjects/", "All subjects"), ("/learning-levels/", "Learning levels"), ("/curricula/", "Curricula"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress")])
     items += link("/tutors/", "Tutors")
     items += dropdown("Resources", [("/free-notes/", "Free study notes"), ("/try-a-lesson/", "Try a mini lesson"), ("/journal/", "Blogs & Articles")])
     items += dropdown("Pricing", [("/pricing/", "Plans & pricing"), ("/custom-package/", "Custom packages")])
     items += dropdown("About FCC", [("/about/", "About the campus"), ("/how-it-works/", "How it works"), ("/reviews/", "Family feedback"), ("/parents/", "For parents"), ("/countries/", "Countries"), ("/contact/", "Contact & FAQs")])
     return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand(True)}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
-    <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}</nav>
+    <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}<a class="btn primary mobile-nav-cta" href="/book-a-demo/">Book a Free Demo</a></nav>
     <div class="nav-actions"><button class="site-motion" type="button" data-motion-global aria-pressed="false" aria-label="Pause animations" title="Pause animations" hidden><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path class="pause-bars" d="M9 5v14M15 5v14"/><path class="resume-triangle" d="m8 5 11 7-11 7z"/></svg></button>{button("Free Demo")}</div></div></header>'''
 
 def footer():

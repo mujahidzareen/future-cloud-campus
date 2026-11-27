@@ -4,10 +4,13 @@ document.documentElement.classList.add("js");
 
 const menu = document.querySelector(".menu-toggle");
 const navigation = document.querySelector("#nav-links");
+const mobileNavigation = matchMedia("(max-width: 1099px)");
+const closeDropdowns = () => navigation.querySelectorAll(".nav-dropdown[open]").forEach(dropdown => { dropdown.open = false; });
 const setMenu = (open) => {
   navigation.classList.toggle("open", open);
   menu.setAttribute("aria-expanded", String(open));
   menu.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  if (!open) closeDropdowns();
 };
 menu.addEventListener("click", () => setMenu(menu.getAttribute("aria-expanded") !== "true"));
 document.addEventListener("keydown", (event) => {
@@ -27,8 +30,15 @@ document.addEventListener("pointerdown", (event) => {
   if (!navigation.contains(event.target) && !menu.contains(event.target)) setMenu(false);
 });
 navigation.addEventListener("focusout", (event) => {
-  if (!navigation.contains(event.relatedTarget) && event.relatedTarget !== menu) setMenu(false);
+  // Touch browsers can report a null focus target while activating a link.
+  // Outside pointer presses are handled separately; do not hide a pending tap.
+  if (event.relatedTarget && !navigation.contains(event.relatedTarget) && event.relatedTarget !== menu) setMenu(false);
 });
+navigation.addEventListener("click", (event) => {
+  if (mobileNavigation.matches && event.target.closest("a[href]")) setMenu(false);
+});
+mobileNavigation.addEventListener("change", () => setMenu(false));
+window.addEventListener("pageshow", (event) => { if (event.persisted) setMenu(false); });
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const pointerCanTilt = matchMedia("(hover: hover) and (pointer: fine)");
@@ -108,9 +118,9 @@ dropdowns.forEach((dropdown) => {
   });
 });
 document.addEventListener("pointerdown", (event) => {
-  dropdowns.forEach((dropdown) => {
-    if (!dropdown.contains(event.target)) dropdown.open = false;
-  });
+  // Switching disclosures must finish its click before the previous section
+  // collapses, otherwise links below it move away from the pointer on mobile.
+  if (!navigation.contains(event.target) && !menu.contains(event.target)) closeDropdowns();
 });
 
 const market = document.querySelector("[data-pricing-country]");
