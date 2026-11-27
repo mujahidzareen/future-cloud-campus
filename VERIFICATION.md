@@ -97,3 +97,12 @@
 - Tested grouped mobile navigation, resource submenu, submenu Escape then menu Escape, and desktop Resources → Free study notes navigation.
 - Opened and closed Ayaan’s specific native profile dialog at the 320-pixel frame width (285-pixel dialog width). Confirmed readable dark-green Quran hero text on pale green and all four Quran course cards.
 - Verified the global pause control on the new artwork. Existing reduced-motion, off-screen and inactive-tab rules cover the new motion. No field performance or conversion result is claimed.
+
+## Motion-only update with protected homepage hero — 27 November 2026
+- Compared the generated output to a pre-edit baseline: all 74 pages retain identical visible source wording, image attributes and anchor destinations. The homepage hero markup remains byte-for-byte identical (SHA-256 `92150cd32f063b04ec896800f7b22142921bf3242a7671bfaef45648f125e58c`).
+- Browser compared the homepage hero before/after: width, height, background, heading font/colour, image URL and text all matched exactly. No new motion attributes occur within the hero.
+- Verified stagger delays of 0/85/170/255ms, fully settled opacity and title reveals. Checked About illustration scroll drift changing with scroll, bounded to 22px.
+- Found and corrected an entry-mask/IntersectionObserver interaction during QA; titles now reveal correctly on entering the viewport. Interactive cards/groups fade without positional motion, and a cold first click opens Ayaan’s specific tutor dialog.
+- Checked 32 layouts across Home, About, Subjects, Mathematics, Pricing, Tutors, Quran Reading and Booking at 320, 375, 768 and 1440 frame widths: no horizontal page overflow.
+- Tested mobile lesson feedback, tutor dialog opening/closing, and motion pause/resume. On mobile pause, all new nodes were visible and all new translations were disabled. Protected dialog descendants contain no new motion attributes.
+- Reduced-motion, print, off-screen and inactive-tab rules are present; no browser media-preference emulation or field performance benchmark was performed.

@@ -1,0 +1,20 @@
+/* AllviA-inspired entry choreography and restrained scroll depth. No layout or content changes. */
+.campus-motion-ready main [data-campus-motion]{--campus-rise:34px;--campus-drift:0px;--campus-zoom:1;--campus-turn:0deg;--campus-delay:0ms;opacity:0;translate:0 var(--campus-rise);scale:.985;rotate:0deg;transition:opacity .85s cubic-bezier(.16,1,.3,1),translate 1.05s cubic-bezier(.16,1,.3,1),scale 1.1s cubic-bezier(.16,1,.3,1),rotate 1.1s cubic-bezier(.16,1,.3,1),clip-path 1.1s cubic-bezier(.16,1,.3,1);transition-delay:var(--campus-delay);backface-visibility:hidden}
+.campus-motion-ready main [data-campus-motion].visible{animation:none}
+.campus-motion-ready main [data-campus-motion="title"]{--campus-rise:44px;scale:1;clip-path:inset(0 0 12% 0);transform-origin:50% 100%}
+.campus-motion-ready main [data-campus-motion="label"]{--campus-rise:18px;scale:1}
+.campus-motion-ready main [data-campus-motion="copy"]{--campus-rise:28px;scale:1}
+.campus-motion-ready main [data-campus-motion="card"]{--campus-rise:42px;rotate:x 5deg;scale:.97;transform-origin:50% 90%}
+.campus-motion-ready main [data-campus-motion="visual"]{--campus-rise:55px;scale:.92;rotate:y -5deg;clip-path:inset(5% 5% 5% 5% round 30px);transform-origin:center;isolation:isolate}
+.campus-motion-ready main [data-campus-motion].campus-entered{opacity:1;translate:0 var(--campus-drift);scale:var(--campus-zoom);rotate:var(--campus-turn);clip-path:inset(-30% -30% -30% -30% round 0)}
+.campus-motion-ready main [data-campus-motion="visual"].campus-entered{transition-delay:0s}
+.campus-motion-ready main [data-campus-motion]:focus-within{opacity:1;translate:none;scale:1;rotate:none;clip-path:none;transition:none}
+/* New motion stays out of the protected homepage hero by construction and by CSS guard. */
+.campus-motion-ready .discovery-hero [data-campus-motion],.campus-motion-ready .studio-hero [data-campus-motion]{opacity:1;translate:none;scale:none;rotate:none;clip-path:none;transition:none}
+.motion-paused main [data-campus-motion],.tab-inactive main [data-campus-motion]{opacity:1!important;translate:none!important;scale:1!important;rotate:none!important;clip-path:none!important;transition:none!important}
+@media(max-width:899px){.campus-motion-ready main [data-campus-motion]{--campus-rise:22px;transition-duration:.65s;scale:1;rotate:none}.campus-motion-ready main [data-campus-motion="visual"]{--campus-rise:28px;scale:.97}.campus-motion-ready main [data-campus-motion="card"]{--campus-rise:26px;rotate:none}}
+@media(prefers-reduced-motion:reduce){.campus-motion-ready main [data-campus-motion]{opacity:1!important;translate:none!important;scale:1!important;rotate:none!important;clip-path:none!important;transition:none!important}}
+@media print{main [data-campus-motion]{opacity:1!important;translate:none!important;scale:1!important;rotate:none!important;clip-path:none!important;transition:none!important}}
+
+/* Action targets fade in place so a first click never chases an entering card. */
+.campus-motion-ready main [data-campus-motion][data-campus-stable]{translate:none;scale:1;rotate:none;clip-path:none;transition-property:opacity}

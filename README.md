@@ -136,3 +136,11 @@ The hero includes a new transparent clay learning island. The page combines stag
 Stage choices use a normal GET form to `learning-levels/` and initialize its existing picker through the `stage` query. Curriculum and stage then carry into the enquiry. Lesson tabs support arrows/Home/End, correct and incorrect feedback, reset, and a follow-up answer disclosure; no account, remote request or saved score is involved. Without JavaScript the stage form and worked lesson content remain available.
 
 Per-page artwork, Quran data/library, tutor profile dialogs, About sculpture/CEO message and portal Coming Soon pages remain. New theme rules preserve explicit readable Quran foreground colours. The compressed heading font remains local. Global pause/reduced-motion behavior applies to the new featured artwork, and the unused cursor-halo pointer listener has been removed.
+
+### Scroll motion, with homepage hero preserved — 27 November 2026
+
+`assets/campus-motion.js` and `.css` add presentation-only title/copy reveals, staggered card fades, image entry depth and bounded scroll-linked image translation/scale. The existing homepage hero is excluded, including its original animation, typography, content and artwork. No page text, images, destinations, order or static layout has changed.
+
+Interactive targets fade in place; their entrance cannot move a button away from a click. Focus and fragment navigation reveal destinations immediately. Forms, dialogs, Quran study/reader workspaces, lesson controls and article reading panels are excluded. The motion respects the existing pause control, reduced-motion preference, visibility and desktop/mobile limits. Mobile has shorter entry effects and no scroll-linked parallax. Ordinary scrolling remains native. No library, tracking request, auto-scrolling or animation loop was added.
+
+The effect was informed by the visible opacity/vertical reveals and progressive visual storytelling on the supplied AllviA reference. Its content, assets, claims and source implementation were not copied. The existing FCC design remains intact under the latest instruction to preserve the homepage hero and content.
