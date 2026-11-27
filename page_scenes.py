@@ -15,7 +15,7 @@ SCENE_COPY={
 
 def scene_family(route):
  key=route.strip('/')
- if key in ('quran-education','quran-reading','noorani-qaida','tajweed','islamic-studies'):return 'quran'
+ if key in ('quran-education','quran-reading','quran-translation','noorani-qaida','tajweed','islamic-studies'):return 'quran'
  if key in ('science','chemistry','biology','physics') or any(x in key for x in ('forces','cells','energy','atoms')):return 'science'
  if key in ('english','languages') or any(x in key for x in ('grammar','writing')):return 'language'
  if key.startswith(('free-notes','journal')):return 'resources'

@@ -7,3 +7,34 @@
 @media(prefers-reduced-motion:reduce){.learning-step,.sound-tile{transition:none}.learning-step:hover,.sound-tile:hover{transform:none}}
 
 .quran-library-link{display:block;margin-top:19px;font-size:.875rem;font-weight:600;color:#31684b;line-height:1.7}
+
+/* English-first resources, with original source collections kept separate. */
+.quran-resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.quran-resource-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:30px;border:1px solid #cbded4;border-radius:25px;background:linear-gradient(145deg,#fff,#eef7f1);box-shadow:inset 0 2px 3px #fff,0 5px 0 #dce9e0,0 16px 30px #193e3210;transition:transform .25s,border-color .25s,background .25s,box-shadow .25s}
+.quran-resource-card:only-child{max-width:720px}
+.quran-resource-card:hover,.quran-resource-card:focus-within{transform:perspective(900px) translateY(-4px) rotateX(1deg);border-color:#4eaa9c;background:linear-gradient(140deg,#fff,#e4f5ed);box-shadow:inset 0 2px 3px #fff,0 7px 0 #c9e4d9,0 22px 35px #193e3216}
+.quran-resource-card .resource-type{color:#306853;font-size:.72rem;font-weight:650;letter-spacing:.1em;line-height:1.7}
+.quran-resource-card h3{font-size:clamp(1.25rem,2.2vw,1.65rem);line-height:1.3;letter-spacing:-.025em;color:#183e33;margin:16px 0 12px;overflow-wrap:anywhere}
+.quran-resource-card p{color:#426353;font-size:1rem;line-height:1.8;margin:0 0 24px;max-width:58ch}
+.quran-resource-card .btn{margin-top:auto;gap:12px;max-width:100%;min-height:46px;white-space:normal;text-align:left}
+.quran-resources .resource-backlink{margin:30px 0 0;font-size:.94rem;line-height:1.8;color:#365f4c}
+.resource-backlink a,.learning-source a,.reader-heading p a{color:#245e49;text-decoration:underline;text-underline-offset:4px}
+.resource-collections{display:grid;gap:14px}
+.resource-collection{min-width:0;border:1px solid #cedfd5;border-radius:22px;overflow:clip;background:#f7fbf8;box-shadow:0 4px 0 #e1ebe5}
+.resource-collection>summary{display:flex;align-items:center;gap:20px;min-height:82px;padding:22px 26px;cursor:pointer;list-style:none;color:#214d38;font-size:1.08rem;font-weight:600;line-height:1.55;transition:background .2s}
+.resource-collection>summary::-webkit-details-marker{display:none}
+.resource-collection>summary>span{flex:1;min-width:0}
+.resource-collection>summary>small{font-size:.78rem;font-weight:400;white-space:nowrap;color:#567565}
+.resource-collection>summary:after{content:'+';font-size:1.5rem;font-weight:400;color:#35735a}
+.resource-collection[open]>summary:after{content:'−'}
+.resource-collection>summary:hover,.resource-collection[open]>summary{background:#eaf6ee}
+.collection-links{padding:0 26px 12px}
+.collection-link{display:flex;align-items:center;gap:16px;padding:20px 0;border-top:1px solid #d8e6dd;color:#274f3d;min-width:0}
+.collection-link>span:first-child{flex:1;min-width:0}
+.collection-link strong{display:block;font-size:1rem;font-weight:550;line-height:1.6}
+.collection-link small{display:block;font-size:.9rem;line-height:1.8;color:#567060;margin-top:4px}
+.collection-link:hover strong{text-decoration:underline;text-underline-offset:4px}
+.quran-resource-card :focus-visible,.resource-collection summary:focus-visible,.collection-link:focus-visible{outline:3px solid #157a77;outline-offset:5px}
+@media(max-width:650px){.quran-resource-grid{grid-template-columns:minmax(0,1fr);gap:18px}.quran-resource-card{padding:25px 22px}.resource-collection>summary{padding:20px;gap:12px;font-size:1rem;flex-wrap:wrap}.resource-collection>summary>span{flex-basis:calc(100% - 38px)}.resource-collection>summary>small{order:2;flex-basis:100%}.collection-links{padding:0 20px 10px}.collection-link{padding:18px 0}.quran-resource-card .btn{font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){.quran-resource-card{transition:none}.quran-resource-card:hover,.quran-resource-card:focus-within{transform:none}}
+.motion-paused .quran-resource-card,.motion-paused .quran-resource-card:hover{transform:none;transition:none}

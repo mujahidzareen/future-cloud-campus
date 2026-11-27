@@ -21,7 +21,8 @@ SUBJECTS = [
      ("Are the activities suited to beginners?", "Activities can start with accessible visual or verbal puzzles and increase in complexity as the learner explains their reasoning.")),
 ]
 QURAN = [
-    ("quran-reading", "Quran Reading & Urdu Translation", "Read all 114 surahs with Arabic text, Urdu translation and footnotes. Practise Nazra with a teacher alongside the reader.", "Short reading practice, correction of recurring errors, and revision of the previous lesson."),
+    ("quran-translation", "Translation", "Read the supplied English Quran translation by Mufti Taqi Usmani. Keep Arabic reading and the English meaning close, with Urdu available as an optional reader setting.", "Read a short passage, explore its English meaning and discuss questions with your teacher."),
+    ("quran-reading", "Quran Nazra", "Practise Arabic reading across all 114 surahs with English controls. Browse the 30 separate Juz PDFs; Urdu translation is optional and off by default.", "Short reading practice, correction of recurring errors, and revision of the previous lesson."),
     ("noorani-qaida", "Noorani Qaida", "Build the foundations for Quran reading, starting with letter recognition and sounds and moving towards joined letters and short combinations.", "Letter recognition, articulation, vowel marks and blending at a manageable pace."),
     ("tajweed", "Tajweed & Makharij", "Develop articulation and apply recitation rules with guided practice and feedback.", "Articulation points, listening and repetition, and applying rules in the learner’s current reading."),
     ("islamic-studies", "Islamic Studies", "Explore introductory Islamic learning in age-appropriate lessons. Ask the admissions team about the current curriculum and available topics.", "Possible areas include daily duas, Salah and foundational Islamic learning, subject to the agreed curriculum."),

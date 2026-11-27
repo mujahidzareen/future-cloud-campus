@@ -36,7 +36,7 @@ if(reader){
    save.addEventListener('click',()=>{try{const position={surah:activeSurah,ayah:row.aya};localStorage.setItem('fcc-quran-position',JSON.stringify(position));saved=position;resume.hidden=false;reader.querySelectorAll('.verse-save').forEach(b=>b.textContent='Save position');save.textContent='Saved here';status.textContent=`Saved ${info.name}, ayah ${row.aya} in this browser.`;}catch{status.textContent='Saving is unavailable in this browser. You can keep this page URL to return to the selected ayah.';}});
    top.append(reference,save);const arabic=el('p','quran-arabic notranslate',row.arabic_text);arabic.lang='ar';arabic.dir='rtl';arabic.translate=false;
    const translation=el('div','verse-translation notranslate');translation.lang='ur';translation.dir='rtl';translation.translate=false;translation.hidden=!toggle.checked;translation.append(el('p','quran-urdu',row.translation));
-   if(row.footnotes){const details=el('details','verse-footnotes');details.append(el('summary','',`حواشی · ${activeSurah}:${row.aya}`),el('p','',row.footnotes));translation.append(details);}
+   if(row.footnotes){const details=el('details','verse-footnotes');details.append(el('summary','',`Footnotes · ${activeSurah}:${row.aya}`),el('p','',row.footnotes));translation.append(details);}
    article.append(top,arabic,translation);if(row.aya===target)article.classList.add('is-selected-ayah');fragment.append(article);
   });
   verses.replaceChildren(fragment);reader.querySelector('[data-reader-title]').textContent=`${activeSurah}. ${info.name}`;reader.querySelector('[data-reader-count]').textContent=`${rows.length} ayahs`;
@@ -53,7 +53,7 @@ if(reader){
   const data=JSON.parse(text);cache.set(pack,data);return data;
  };
  const open=async(surah,target=1)=>{
-  const token=++request;activeSurah=Math.max(1,Math.min(114,Number(surah)||1));select.value=String(activeSurah);error.hidden=true;verses.replaceChildren();setBusy(true);status.textContent='Loading Arabic text and Urdu translation…';
+  const token=++request;activeSurah=Math.max(1,Math.min(114,Number(surah)||1));select.value=String(activeSurah);error.hidden=true;verses.replaceChildren();setBusy(true);status.textContent='Loading Quran reading text…';
   try{
    if(!catalogue){const r=await fetch(new URL(`index.json?v=${reader.dataset.quranVersion}`,base),{credentials:'same-origin'});if(!r.ok)throw new Error('catalogue');catalogue=await r.json();}
    const info=catalogue.chapters[activeSurah-1];ayah.max=String(info.count);target=Math.max(1,Math.min(info.count,Number(target)||1));ayah.value=String(target);

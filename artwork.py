@@ -170,6 +170,7 @@ ART = {
     "logical-reasoning": ("Logical reasoning puzzles and time challenges", puzzle, clock, "gold"),
     "quran-education": ("Quran reading and guided study", open_book, globe, "mint"),
     "quran-reading": ("Open Quran and reading progress", open_book, chart, "mint"),
+    "quran-translation": ("English Quran translation and reading notes", open_book, document, "mint"),
     "noorani-qaida": ("Arabic letter foundations and study book", arabic_letters, open_book, "gold"),
     "tajweed": ("Recitation practice and guided reading", open_book, speech, "blue"),
     "islamic-studies": ("Islamic learning and daily study", book, open_book, "mint"),
