@@ -16,6 +16,7 @@ from quran_learning import hub as quran_hub, workbook as quran_workbook, reader 
 from studio_design import studio_home
 from campus_people import directory as faculty_directory, about_body as campus_about
 from campus_refresh import learning_roadmap
+from page_scenes import render_scene
 
 SUBJECTS = SUBJECTS + EXTRA_SUBJECTS
 COUNTRIES = COUNTRIES + GULF_COUNTRIES
@@ -28,12 +29,17 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js", "campus-refresh.css", "campus-discovery.css", "campus-discovery.js", "campus-motion.css", "campus-motion.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js", "campus-refresh.css", "campus-discovery.css", "campus-discovery.js", "campus-motion.css", "campus-motion.js", "campus-responsive.css", "campus-responsive.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
 
 generate_artwork(DIST)
+
+for retired in ("portal", "careers"):
+    from shutil import rmtree
+    if (DIST / retired).is_dir():
+        rmtree(DIST / retired)
 
 def icon(name, extra=""):
     if name in ("arrow", "diagonal"): return ""
@@ -62,18 +68,20 @@ def nav(path):
     items += dropdown("About FCC", [("/about/", "About the campus"), ("/how-it-works/", "How it works"), ("/reviews/", "Family feedback"), ("/parents/", "For parents"), ("/countries/", "Countries"), ("/contact/", "Contact & FAQs")])
     return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand(True)}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
-    <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}<a class="mobile-portal" href="/portal/">Portal</a></nav>
-    <div class="nav-actions"><button class="site-motion" type="button" data-motion-global aria-pressed="false" aria-label="Pause animations" title="Pause animations" hidden><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path class="pause-bars" d="M9 5v14M15 5v14"/><path class="resume-triangle" d="m8 5 11 7-11 7z"/></svg></button><a class="portal-link" href="/portal/">{icon("lock")} Portal</a>{button("Free Demo")}</div></div></header>'''
+    <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}</nav>
+    <div class="nav-actions"><button class="site-motion" type="button" data-motion-global aria-pressed="false" aria-label="Pause animations" title="Pause animations" hidden><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path class="pause-bars" d="M9 5v14M15 5v14"/><path class="resume-triangle" d="m8 5 11 7-11 7z"/></svg></button>{button("Free Demo")}</div></div></header>'''
 
 def footer():
     return f'''<footer class="site-footer"><div class="shell footer-main"><div class="footer-brand">{brand()}<p>Live online learning for families across time zones.</p>{social_icons(True)}</div>
     <div><strong>Explore</strong><a href="/subjects/">Academic subjects</a><a href="/quran-education/">Quran Education</a><a href="/curricula/">Curricula</a><a href="/test-prep/">Exam preparation</a><a href="/countries/">Countries</a></div>
-    <div><strong>Families</strong><a href="/how-it-works/">How it works</a><a href="/parents/">For parents</a><a href="/pricing/">Plans &amp; pricing</a><a href="/free-notes/">Free Notes</a><a href="/faq/">FAQs</a><a href="/portal/">Parent &amp; Teacher Portal</a></div>
-    <div><strong>Campus</strong><a href="/tutors/">Tutor matching</a><a href="/reviews/">Family feedback</a><a href="/try-a-lesson/">Try a mini lesson</a><a href="/about/">About FCC</a><a href="/contact/">Contact &amp; admissions</a><a href="/journal/">Blogs &amp; Articles</a><a href="/careers/">Careers</a></div></div>
+    <div><strong>Families</strong><a href="/how-it-works/">How it works</a><a href="/parents/">For parents</a><a href="/pricing/">Plans &amp; pricing</a><a href="/free-notes/">Free Notes</a><a href="/faq/">FAQs</a></div>
+    <div><strong>Campus</strong><a href="/tutors/">Tutor matching</a><a href="/reviews/">Family feedback</a><a href="/try-a-lesson/">Try a mini lesson</a><a href="/about/">About FCC</a><a href="/contact/">Contact &amp; admissions</a><a href="/journal/">Blogs &amp; Articles</a></div></div>
     <div class="shell studio-footer-wordmark" aria-hidden="true">Future starts here<span>✳</span></div><div class="shell footer-legal"><span>© 2026 Future Cloud Campus</span><div><a href="/privacy/">Privacy</a><a href="/cookies/">Cookies</a><a href="/terms/">Terms</a><a href="/refund-cancellation/">Cancellations</a><a href="/safeguarding/">Safeguarding</a></div></div></footer>'''
 
 def page(path, title, description, body, crumbs=None):
     body = enrich(path, body, NOTES, ARTICLES)
+    if path in ("/try-a-lesson/", "/reviews/") and "data-page-scene" not in body:
+        body = re.sub(r'<section[^>]*>(.*?)</section>', lambda match: '<section class="shell section campus-editorial-hero"><div>'+match.group(1)+'</div>'+render_scene(path)+'</section>', body, count=1, flags=re.S)
     sensitive = path.startswith("/portal") or path in ("/book-a-demo/", "/privacy/", "/terms/", "/cookies/", "/refund-cancellation/", "/safeguarding/") or (path == "/tutors/" and not TUTORS) or (path == "/reviews/" and not REVIEWS)
     robots = "index, follow" if INDEXABLE and not sensitive else "noindex, follow"
     tone = "mint" if path.strip("/") in ["quran-education", "quran-reading", "noorani-qaida", "tajweed", "islamic-studies"] else "peach" if path.strip("/") in ["parents", "reviews", "about", "progress"] else "blue"
@@ -93,10 +101,10 @@ def page(path, title, description, body, crumbs=None):
     <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}<link rel="stylesheet" href="/assets/campus-refresh.css?v={ASSET_VERSION}"><link rel="stylesheet" href="/assets/campus-discovery.css?v={ASSET_VERSION}"><script defer src="/assets/campus-discovery.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/campus-motion.css?v={ASSET_VERSION}"><script defer src="/assets/campus-motion.js?v={ASSET_VERSION}"></script>{structured_markup}
-    </head><body class="studio-site{(" studio-home" if path=="/" else "")} tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}<link rel="stylesheet" href="/assets/campus-refresh.css?v={ASSET_VERSION}"><link rel="stylesheet" href="/assets/campus-discovery.css?v={ASSET_VERSION}"><script defer src="/assets/campus-discovery.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/campus-motion.css?v={ASSET_VERSION}"><script defer src="/assets/campus-motion.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/campus-responsive.css?v={ASSET_VERSION}"><script defer src="/assets/campus-responsive.js?v={ASSET_VERSION}"></script>{structured_markup}
+    </head><body class="studio-site{(" studio-home" if path=="/" else "")} tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path not in ("/book-a-demo/", "/contact/") and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
-    doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
+    doc = re.sub(r'(\b(?:href|src|srcset)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)
     file = DIST / path.strip("/") / "index.html"
     file.parent.mkdir(parents=True, exist_ok=True)
     file.write_text(doc, encoding="utf-8")
@@ -109,10 +117,7 @@ def breadcrumb(items):
     return '<nav aria-label="Breadcrumb" class="crumb">' + " / ".join(f'<a href="{url}">{label}</a>' for label, url in items[:-1]) + f' / <span aria-current="page">{items[-1][0]}</span></nav>'
 
 def page_illustration(route, extra=""):
-    key = route.strip("/")
-    title = ART[key][0]
-    image = key.replace("/", "-") + ".svg"
-    return f'<figure class="page-illustration tilt {extra}"><img class="ambient-art" src="/assets/pages/{image}" alt="{escape(title, quote=True)}" width="480" height="360" decoding="async"></figure>'
+    return render_scene(route, extra)
 
 def hero_small(kicker, title, text, crumbs, actions="", tile="book", tone="violet"):
     return f'<section class="inner-hero"><div class="shell">{breadcrumb(crumbs)}<div class="inner-hero-content"><div><div class="eyebrow"><i></i>{kicker}</div><h1>{title}</h1><p>{text}</p>{f"<div class=hero-actions>{actions}</div>" if actions else ""}</div>{page_illustration(crumbs[-1][1])}</div></div></section>'
@@ -251,7 +256,7 @@ crumbs=[("Home","/"),("How it works","/how-it-works/")]
 page("/how-it-works/","How it works","Learn how tutor matching, a free demo and a personalised learning plan fit together.",hero_small("THE LEARNING JOURNEY","Start with one conversation.","Tell us what’s going well, where your child is getting stuck and what you’d like to achieve.",crumbs,button(),"calendar")+f'<section class="shell section">{timeline()}</section><section class="band"><div class="shell section faq-grid">{section_head("PLANNING YOUR FIRST LESSON","Questions before you start.")}{accordions(FAQ)}</div></section>'+cta(),crumbs)
 
 crumbs=[("Home","/"),("For Parents","/parents/")]
-page("/parents/","For parents","See how Future Cloud Campus uses learning goals and progress evaluations to guide the next lesson.",hero_small("FOR FAMILIES","Stay close to your child’s learning.","Follow the learning plan and use tutor feedback to see what needs practice next.",crumbs,button("See what’s coming to the Parent Portal","/portal/parent/","secondary"),"chart")+f'<section class="shell section two-col">{section_head("EXAMPLE EVALUATION","What a progress update can tell you.","This example shows how a tutor can translate lesson observations into a practical next step.")}{progress()}</section><section class="band"><div class="shell section">{section_head("PARENT RESOURCES","Before and between lessons.")}{tiles([("Before the demo","Have a recent school topic or a question in mind. Consider what would make the next few weeks of learning feel successful."),("Between lessons","Ask the tutor for a short practice activity and give your child time to explain how they approached it."),("At a progress review","Look for the current goal, an example of progress, and the focus for the next lesson.")])}</div></section>'+cta(),crumbs)
+page("/parents/","For parents","See how Future Cloud Campus uses learning goals and progress evaluations to guide the next lesson.",hero_small("FOR FAMILIES","Stay close to your child’s learning.","Follow the learning plan and use tutor feedback to see what needs practice next.",crumbs,button("See a sample progress update","/progress/","secondary"),"chart")+f'<section class="shell section two-col">{section_head("EXAMPLE EVALUATION","What a progress update can tell you.","This example shows how a tutor can translate lesson observations into a practical next step.")}{progress()}</section><section class="band"><div class="shell section">{section_head("PARENT RESOURCES","Before and between lessons.")}{tiles([("Before the demo","Have a recent school topic or a question in mind. Consider what would make the next few weeks of learning feel successful."),("Between lessons","Ask the tutor for a short practice activity and give your child time to explain how they approached it."),("At a progress review","Look for the current goal, an example of progress, and the focus for the next lesson.")])}</div></section>'+cta(),crumbs)
 
 crumbs=[("Home","/"),("FAQs","/faq/")]
 page("/faq/","FAQs","Answers about live lessons, tutor matching, progress and preparing for a free demo.",hero_small("FAMILY FAQ","Questions families ask.","Find out what to prepare and how online lessons are designed.",crumbs,tile="language")+f'<section class="shell section faq-grid">{section_head("COMMON QUESTIONS","Before your first lesson.")}{accordions(FAQ)}</section>'+cta(),crumbs)
@@ -261,7 +266,6 @@ page("/about/","About Future Cloud Campus","Explore FCC’s purpose, personal le
 
 for slug, name, desc, details, glyph in [
     ("contact","Contact & admissions","Tell admissions which programme, level and time zone you’re interested in.","Start with a demo enquiry for lessons or a custom package. Share your school course, subject and preferred local times.","language"),
-    ("careers","Careers","Teach live online with a focus on individual learning goals and clear feedback.","Open roles and a secure application form can be published here once the hiring team confirms its recruitment details.","people"),
 ]:
     path=f"/{slug}/"
     crumbs=[("Home","/"),(name,path)]
@@ -272,7 +276,7 @@ POLICIES = {
     "cookies":("Cookies","The site preview does not set application cookies or load analytics or advertising scripts. The hosting provider may use its own sign-in controls."),
     "terms":("Terms","This is a review version. Enrollment terms, class arrangements and payment conditions must be confirmed by Future Cloud Campus before public launch."),
     "refund-cancellation":("Refunds & cancellations","Future Cloud Campus will need to confirm how families can reschedule or cancel lessons and when refunds are available before taking live bookings or payments."),
-    "safeguarding":("Safeguarding","The portals are coming soon. Before opening live services, FCC must approve its safeguarding policy, designate a reporting contact and confirm access and retention rules for any student records."),
+    "safeguarding":("Safeguarding","Before enrolling learners, FCC must approve its safeguarding policy, designate a reporting contact and confirm access and retention rules for any student records."),
 }
 for slug, (name, desc) in POLICIES.items():
     path=f"/{slug}/"
@@ -284,7 +288,7 @@ options = ''.join(f'<option value="{slug}">{escape(name)}</option>' for slug, na
 country_options = ''.join(f'<option value="{slug}" data-code="{code}">{name}</option>' for slug,name,code in [
     ("uk","United Kingdom","+44"),("usa","United States","+1"),("canada","Canada","+1"),("ireland","Ireland","+353"),("australia","Australia","+61"),("new-zealand","New Zealand","+64"),("pakistan","Pakistan","+92"),("uae","United Arab Emirates","+971"),("saudi-arabia","Saudi Arabia","+966"),("qatar","Qatar","+974"),("oman","Oman","+968"),("other-countries","Other countries",""),("other","Other","")])
 form=f'''<section class="form-band"><div class="shell">{breadcrumb(crumbs)}<div class="form-layout">
-<div class="form-intro"><div class="eyebrow">ADMISSIONS</div><h1>A good start.<br>One simple enquiry.</h1><p>Tell us what your child would like to learn. We’ll help you find a starting point.</p>{page_illustration("/book-a-demo/", "booking-art")}<div class="form-guide"><span class="clay-icon blue">{icon("calendar")}</span><div><h2>A request, then a conversation.</h2><p>Choose a subject and share your availability. When live enquiries open, admissions will confirm the tutor, lesson length and demo time separately.</p></div></div><div class="notice"><p data-intake-notice><strong>Preview mode.</strong> Use sample details. This version does not send your enquiry.</p></div></div>
+<div class="form-intro"><div class="eyebrow">ADMISSIONS</div><h1>A good start.<br>One simple enquiry.</h1><p>Tell us what your child would like to learn. We’ll help you find a starting point.</p>{page_illustration("/book-a-demo/", "booking-scene")}<div class="form-guide"><span class="clay-icon blue">{icon("calendar")}</span><div><h2>A request, then a conversation.</h2><p>Choose a subject and share your availability. When live enquiries open, admissions will confirm the tutor, lesson length and demo time separately.</p></div></div><div class="notice"><p data-intake-notice><strong>Preview mode.</strong> Use sample details. This version does not send your enquiry.</p></div></div>
 <form class="demo-form booking-wizard" id="demo-form" autocomplete="on" novalidate>
 <div class="booking-progress"><span class="card-kicker" data-booking-progress>Step 1 of 3</span><ol aria-label="Booking steps"><li aria-current="step">Learning</li><li>Availability</li><li>Contact</li></ol></div>
 <fieldset data-booking-step="0"><legend>Learning needs</legend><p class="form-hint">Tell us what the learner would like to work on.</p><div class="field-grid"><label>Subject or course *<select name="course" required><option value="">Select a subject</option>{options}</select></label><label>Age, year or grade *<input name="level" required maxlength="50" placeholder="e.g. Year 8"></label><label>Curriculum or exam<input name="curriculum" maxlength="120" placeholder="e.g. GCSE Chemistry, AQA"></label><label>Lesson plan<select name="plan"><option value="">Discuss a plan</option><option>Weekly support</option><option>Progress plan</option><option>Exam focus</option><option>Custom package</option></select></label><label class="field-wide">Learning goal<textarea name="goal" maxlength="400" rows="3" placeholder="e.g. Practise fractions and word problems"></textarea></label></div></fieldset><fieldset data-booking-step="1" hidden><legend>Your availability</legend><p class="form-hint">Use the family’s local time. Your demo time will be confirmed separately.</p><div class="field-grid"><label>Country *<select name="country" required><option value="">Select country</option>{country_options}</select></label><label>Time zone *<select name="timezone" required><option value="">Select time zone</option><option value="Europe/London">UK · London</option><option value="Europe/Dublin">Ireland · Dublin</option><option value="America/New_York">US · Eastern</option><option value="America/Chicago">US · Central</option><option value="America/Denver">US · Mountain</option><option value="America/Los_Angeles">US · Pacific</option><option value="America/Anchorage">US · Alaska</option><option value="Pacific/Honolulu">US · Hawaii</option><option value="America/Toronto">Canada · Eastern</option><option value="America/Vancouver">Canada · Pacific</option><option value="America/Edmonton">Canada · Mountain</option><option value="America/Winnipeg">Canada · Central</option><option value="America/Halifax">Canada · Atlantic</option><option value="America/St_Johns">Canada · Newfoundland</option><option value="Australia/Sydney">Australia · Sydney</option><option value="Australia/Perth">Australia · Perth</option><option value="Pacific/Auckland">New Zealand · Auckland</option><option value="Asia/Karachi">Pakistan · Karachi</option><option value="Asia/Dubai">UAE · Dubai</option><option value="Asia/Riyadh">Saudi Arabia · Riyadh</option><option value="Asia/Qatar">Qatar · Doha</option><option value="Asia/Muscat">Oman · Muscat</option><option value="other">Other / discuss availability</option></select></label><label>Preferred days and time<input name="time" maxlength="100" placeholder="e.g. Tuesday after 5 pm"></label></div></fieldset><fieldset data-booking-step="2" hidden><legend>Contact details</legend><p class="form-hint">Parent or guardian details only. Fields marked * are required.</p><div class="field-grid"><label>Parent or guardian name *<input name="name" required maxlength="100" placeholder="Parent or guardian name" autocomplete="name"></label><label>Email *<input name="email" type="email" required maxlength="160" placeholder="parent@example.com" autocomplete="email"></label><div class="phone-field"><label>Country code *<select name="code" required><option value="">Code</option><option>+44</option><option>+1</option><option>+353</option><option>+61</option><option>+64</option><option>+92</option><option>+971</option><option>+966</option><option>+974</option><option>+968</option><option value="other">Other</option></select></label><label>WhatsApp / phone *<input autocomplete="tel-national" name="phone" type="tel" required maxlength="22" minlength="7" pattern="[+0-9 \\(\\)\\-]{{7,22}}" title="Enter a phone number using digits, spaces, parentheses, plus or hyphen." placeholder="7700 900000"></label></div></div><label class="consent-field"><input type="checkbox" name="consent" required><span>I am a parent or guardian and I have read the <a href="/privacy/">privacy information</a>.</span></label><div class="form-trap" aria-hidden="true"><label>Leave this blank<input name="website" tabindex="-1" autocomplete="off"></label></div></fieldset>
@@ -293,57 +297,6 @@ form=f'''<section class="form-band"><div class="shell">{breadcrumb(crumbs)}<div 
 </div></div></section>'''
 
 page("/book-a-demo/","Book a Free Demo","Plan a free demo enquiry in three simple steps: learning needs, availability and guardian contact details.",form,crumbs)
-
-PORTALS = {
-    "parent": ("Parent Portal", "A clearer view of your child’s learning, from upcoming lessons to the tutor’s next recommendation.", [
-        ("Lesson schedule", "calendar", "See upcoming sessions in your local time."),
-        ("Progress updates", "chart", "See what your child is working on and where they need practice."),
-        ("Attendance", "check", "Review which lessons your child attended."),
-    ]),
-    "teacher": ("Teacher Portal", "A workspace for planning lessons, recording attendance and sharing feedback with families.", [
-        ("Teaching schedule", "calendar", "Check your upcoming classes and assigned learners."),
-        ("Lesson notes", "book", "Record what you covered and what to practise next."),
-        ("Learning evaluations", "chart", "Capture strengths, progress and priorities for the next session."),
-    ]),
-}
-
-def portal_page(role=None):
-    path = f"/portal/{role}/" if role else "/portal/"
-    title = PORTALS[role][0] if role else "Parent &amp; Teacher Portals"
-    intro = PORTALS[role][1] if role else "We’re building dedicated workspaces for families and tutors to manage lessons and follow learning progress."
-    crumbs = [("Home", "/"), ("Portal", "/portal/")]
-    if role:
-        crumbs.append((title, path))
-    nav = "".join(
-        f'<a href="/portal/{key}/"{" aria-current=page" if key == role else ""}>{icon("people" if key == "parent" else "book")}{name}</a>'
-        for key, (name, *_rest) in PORTALS.items()
-    )
-    art = page_illustration(path, "portal-illustration")
-    banner = f"""<section class="launch-section"><div class="shell">{breadcrumb(crumbs)}
-      <div class="launch-banner"><div class="launch-copy">
-        <span class="launch-status"><i></i> IN DEVELOPMENT</span>
-        <p class="launch-product">{title}</p><h1>Coming<br>soon<span>.</span></h1>
-        <p class="launch-intro">{intro}</p>
-        <div class="hero-actions">{button("Explore Subjects", "/subjects/", "light")}{button("Back to Home", "/", "launch-back", "")}</div>
-      </div>{art}</div>
-      <nav class="launch-nav" aria-label="Choose a portal">{nav}</nav>
-    </div></section>"""
-    if role:
-        features = PORTALS[role][2]
-        upcoming = '<div class="info-grid">' + "".join(
-            f'<article class="info-card tilt reveal"><span class="clay-icon {tone}">{icon(glyph)}</span><h3>{name}</h3><p>{desc}</p></article>'
-            for (name, glyph, desc), tone in zip(features, ("violet", "blue", "mint"))
-        ) + '</div>'
-    else:
-        upcoming = '<div class="portal-grid">' + "".join(
-            f'<a class="subject-card tilt reveal" href="/portal/{key}/"><span class="clay-icon {tone}">{icon(glyph)}</span><h3>{name}</h3><p>{desc}</p><span class="card-arrow">{icon("diagonal")}</span></a>'
-            for (key, (name, desc, _)), tone, glyph in zip(PORTALS.items(), ("violet", "blue"), ("people", "book"))
-        ) + '</div>'
-    body = banner + f'<section class="shell section">{section_head("IN THE WORKS", "What you’ll be able to do.")}{upcoming}</section>'
-    page(path, f"{title.replace('&amp;', '&')} Coming Soon", intro, body, crumbs)
-
-for role in (None, *PORTALS):
-    portal_page(role)
 
 # Additional learning pathways and resources.
 curriculum_cards = "".join(image_card(f"/curricula/{slug}/", name, desc, "Explore curriculum") for slug,name,desc,_ in CURRICULA)

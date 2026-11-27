@@ -1,0 +1,134 @@
+/* Original page-specific clay scenes. The approved home hero remains separate. */
+.studio-site:not(.studio-home) .page-illustration.campus-page-scene{position:relative;isolation:isolate;width:100%;max-width:540px;aspect-ratio:1.12;margin:0 auto;padding:0;border:0;background:none;box-shadow:none;transform:none;border-radius:0;overflow:visible;perspective:900px;--scene-float:9px}
+.campus-page-scene .campus-scene-halo{position:absolute;inset:9% 3% 2%;background:#dceef2;border-radius:44% 56% 58% 42% / 51% 45% 55% 49%;box-shadow:inset 0 5px 15px #ffffff90;z-index:-2;transform:rotate(-6deg)}
+.scene-quran .campus-scene-halo,.scene-family .campus-scene-halo{background:#d8eee2}.scene-language .campus-scene-halo,.scene-resources .campus-scene-halo{background:#f8e6c6}
+.campus-page-scene .campus-scene-main{position:absolute;width:108%;max-width:none;height:108%;inset:-4%;object-fit:contain;border:0;border-radius:0;filter:drop-shadow(0 15px 15px #163c5115);animation:campus-page-float 9s ease-in-out infinite;transform-origin:center;mix-blend-mode:normal}
+.campus-page-scene .campus-scene-topic{position:absolute;width:28%;height:auto;right:-2%;bottom:0;object-fit:contain;border-radius:20px!important;border:3px solid #fff9;background:#fff9;box-shadow:0 5px 0 #d5e3e6,0 12px 20px #193b5912;transform:rotate(8deg);animation:campus-topic-float 11s ease-in-out infinite;mix-blend-mode:normal}
+.campus-scene-orbit{position:absolute;inset:8% -2% 5%;border:1px solid #7ca5b140;border-radius:50%;transform:rotate(-19deg);z-index:-1}
+.campus-scene-dot{position:absolute;top:13%;left:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#ffdc83 38%,#cfa74d);box-shadow:0 8px 15px #586c7c15}
+@keyframes campus-page-float{0%,100%{transform:translateY(0) rotateY(calc(var(--tilt-y,0deg) - 3deg)) rotateX(var(--tilt-x,0deg)) rotate(-1deg)}50%{transform:translateY(calc(var(--scene-float) * -1)) rotateY(calc(var(--tilt-y,0deg) + 3deg)) rotateX(var(--tilt-x,0deg)) rotate(1deg)}}
+@keyframes campus-topic-float{0%,100%{transform:translateY(0) rotate(8deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+.studio-site .faculty-hero-grid .faculty-scene{max-width:510px}
+.studio-site .form-intro>.booking-scene{max-width:330px;aspect-ratio:1.3;margin:0 auto 30px}
+/* Grids must be allowed to shrink, and their text must wrap inside the available measure. */
+.studio-site main :is(.inner-hero-content,.two-col,.info-grid,.subject-grid,.form-layout,.field-grid,.resource-grid,.faculty-grid,.campus-method-grid,.campus-purpose-grid,.campus-values-grid,.campus-next-grid,.section-heading-row,.discovery-section-head)>*{min-width:0}
+.studio-site main :is(h1,h2,h3,p,li,dd,label,.btn,button,summary){overflow-wrap:break-word}
+.studio-site main :is(.btn,button){white-space:normal;max-width:100%;line-height:1.5}
+.studio-site main :is(.btn,button,summary,select){min-height:44px}
+.studio-site main :is(.btn,button){min-width:44px}
+.studio-site main :is(.hero-actions,.booking-buttons,.resource-actions,.pathway-actions,.faculty-help,.campus-about-cta){gap:14px;flex-wrap:wrap}
+.studio-site main :is(input,select,textarea){max-width:100%;min-width:0}
+.studio-site .site-motion,.studio-site .menu-toggle{width:44px;min-width:44px;height:44px;min-height:44px;flex:none}
+.studio-site .nav-actions>.btn{min-height:44px}
+.studio-site .social-compact .social-link{width:44px;min-height:44px}
+/* Mobile navigation is an explicit scrollable sheet rather than a squeezed desktop row. */
+@media(max-width:1099px){
+ .studio-site .nav{gap:14px}
+ .studio-site .nav-links.open{max-height:calc(100dvh - 105px);overflow-y:auto;overscroll-behavior:contain;padding-bottom:24px}
+ .studio-site .nav-popover{min-width:0;max-width:100%;width:100%}
+ .studio-site .nav-links a,.studio-site .nav-dropdown>summary{white-space:normal;min-height:44px;display:flex;align-items:center}
+}
+@media(max-width:899px){
+ .studio-site .inner-hero-content,.studio-site .hero-reversed .inner-hero-content{grid-template-columns:minmax(0,1fr);gap:35px}
+ .studio-site .inner-hero-content>div{min-width:0}
+ .studio-site .page-illustration.campus-page-scene{max-width:450px;width:min(100%,450px);--scene-float:6px}
+ .studio-site .faculty-hero-grid{grid-template-columns:minmax(0,1fr)}
+ .studio-site .two-col,.studio-site .faq-grid,.studio-site .form-layout,.studio-site .quote-layout{grid-template-columns:minmax(0,1fr)}
+ .studio-site .subject-grid,.studio-site .subject-catalog .subject-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .studio-site .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .studio-site .info-card h3,.studio-site .subject-card h3{font-size:clamp(21px,3vw,27px);overflow-wrap:anywhere}
+ .studio-site .quick-help{right:14px;bottom:90px}
+ .studio-site[data-booking=true] .quick-help{bottom:18px}
+}
+@media(max-width:600px){
+ .studio-site .shell{width:calc(100% - 36px)}
+ .studio-site .nav{height:80px;gap:10px}
+ .studio-site .brand{flex:1;min-width:0;font-size:14px;gap:9px;max-width:190px}
+ .studio-site .brand-emblem{width:42px;height:45px;flex:0 0 42px}
+ .studio-site .brand>span:last-child{line-height:1.15}
+ .studio-site .brand small{font-size:6px;letter-spacing:.08em;white-space:normal}
+ .studio-site .nav-actions{gap:8px;flex:none;margin-left:0}
+ .studio-site .menu-toggle{margin-left:0;order:3}
+ .studio-site .nav-actions>.btn{font-size:.72rem;padding-inline:13px;min-height:44px}
+ .studio-site .site-motion{width:44px;min-width:44px}
+ .studio-site .nav-links.open{top:79px;left:0;right:0;width:100%;max-height:calc(100dvh - 80px);padding:20px 24px 35px}
+ .studio-site .inner-hero h1{font-size:clamp(33px,8.2vw,47px)!important;line-height:1.08;letter-spacing:-.045em}
+ .studio-site .inner-hero p{font-size:1rem;line-height:1.85}
+ .studio-site .inner-hero-content{padding-bottom:42px}
+ .studio-site:not(.studio-home) .page-illustration.campus-page-scene{width:calc(100% - 16px);max-width:380px;aspect-ratio:1.12;margin-inline:auto}
+ .campus-page-scene .campus-scene-topic{right:0;max-width:100px;border-radius:14px!important}
+ .studio-site .section{padding-block:52px}
+ .studio-site main .btn{min-height:48px;padding:12px 18px;font-size:.86rem}
+ .studio-site main :is(input,select,textarea){font-size:16px!important;min-height:46px}
+ .studio-site main :is(input[type=checkbox],input[type=radio]){min-height:0}
+ .studio-site .subject-grid,.studio-site .subject-catalog .subject-grid,.studio-site .info-grid,.studio-site .two-col .info-grid,.studio-site .steps,.studio-site .quran-grid{grid-template-columns:minmax(0,1fr);gap:22px}
+ .studio-site .info-card,.studio-site .subject-card{padding:25px;min-width:0}
+ .studio-site .info-card h3,.studio-site .subject-card h3{font-size:25px;line-height:1.2;overflow-wrap:normal}
+ .studio-site .info-card p,.studio-site .subject-card p{font-size:.94rem;line-height:1.85}
+ .studio-site .discovery-subject p{font-size:.83rem}
+ .studio-site .discovery-subject-link{font-size:.77rem}
+ .studio-site .hero-actions>.btn{width:auto;justify-content:center}
+ .studio-site .form-layout{gap:32px}
+ .studio-site .field-grid{grid-template-columns:minmax(0,1fr)}
+ .studio-site .booking-buttons>.btn{flex:1 1 140px}
+ .studio-site .confirmation dl{grid-template-columns:1fr;gap:6px}
+ .studio-site .confirmation dd{margin-bottom:14px}
+ .studio-site .resource-actions{flex-wrap:wrap}
+ .studio-site .resource-actions a{min-height:44px;display:inline-flex;align-items:center}
+ .studio-site .review-track>.review-card{flex-basis:100%;max-width:100%}
+ .studio-site .review-card{padding:24px}
+ .studio-site .plan-comparison{font-size:.85rem}
+ .studio-site .plan-comparison th,.studio-site .plan-comparison td{padding:13px 15px}
+ .studio-site .campus-ceo-grid{width:calc(100% - 36px)}
+ .studio-site .campus-ceo-name{overflow-wrap:normal}
+ .studio-site .faculty-profile-dialog{width:calc(100% - 24px);max-width:calc(100% - 24px);max-height:calc(100dvh - 24px);margin:auto}
+ .studio-site .reader-font-tools{flex-wrap:wrap;gap:10px}
+ .studio-site .reader-tools,.studio-site .reader-toolbar{min-width:0}
+ .studio-site .reader-page-controls{gap:10px;flex-wrap:wrap}
+ .studio-site .reader-page-controls button{flex:1 1 120px}
+ .studio-site .reader-surah-controls button{padding:10px 0}
+ .studio-site .quick-help{bottom:92px;right:12px}
+ .studio-site .quick-help>summary{min-width:44px;min-height:44px}
+ .studio-site .quick-help>div{width:min(300px,calc(100vw - 30px));max-height:60dvh;overflow:auto}
+ .studio-site .mobile-booking-bar{padding-bottom:max(8px,env(safe-area-inset-bottom));bottom:8px;left:10px;right:10px}
+ .studio-site .mobile-booking-bar .btn{min-height:44px}
+ .studio-site .footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 20px}
+ .studio-site .footer-brand{grid-column:1/-1}
+ .studio-site .footer-main>div>a,.studio-site .footer-legal a{display:inline-flex;align-items:center;min-height:40px;line-height:1.6}
+ .studio-site .footer-legal>div{flex-wrap:wrap;gap:5px 17px}
+}
+@media(max-width:420px){
+ .studio-site .nav-actions>.btn{display:none}
+ .studio-site .brand{max-width:190px;font-size:15px}
+ .studio-site .brand small{font-size:6px}
+ .studio-site .discovery-subject-grid{grid-template-columns:minmax(0,1fr);gap:23px}
+ .studio-site .discovery-subject{padding:24px}
+ .studio-site .discovery-subject img{height:165px}
+ .studio-site .discovery-subject h3{font-size:1.55rem}
+ .studio-site .discovery-subject p{min-height:0;font-size:.88rem}
+ .studio-site .peek-tabs button{font-size:.69rem;gap:4px}
+ .studio-site .peek-tabs{padding-inline:15px}
+ .studio-site .peek-panel{padding-inline:22px}
+ .studio-site .discovery-finale{padding:28px 24px 0}
+ .studio-site .discovery-finale h2{font-size:32px}
+ .studio-site .stage-finder-bottom{align-items:flex-start;flex-direction:column}
+ .studio-site .discovery-stage-go{min-height:44px;width:100%}
+}
+.motion-paused .campus-page-scene img,.tab-inactive .campus-page-scene img,.scene-offscreen img{animation-play-state:paused!important}
+.motion-paused .campus-page-scene .campus-scene-main{transform:none!important}
+@media(prefers-reduced-motion:reduce){.campus-page-scene img{animation:none!important;transform:none!important}}
+@media(max-width:600px){.studio-site .quick-help{display:none}}
+
+.studio-site:not(.studio-home) .campus-page-scene .campus-scene-main{width:108%!important;height:108%!important;max-width:none!important;max-height:none!important;border-radius:0!important;object-fit:contain}
+.studio-site .campus-page-scene picture{display:contents}
+/* Contain decorative orbit/entry overshoot at the viewport, without clipping card text. */
+html{overflow-x:clip}
+body.studio-site{max-width:100%;overflow-x:clip}
+.studio-site main .faculty-card .faculty-enquiry{min-height:48px;padding:11px 17px;white-space:normal}
+.studio-site main .reader-font-tools .btn{width:48px;min-width:48px;min-height:48px;padding:8px;display:inline-flex;justify-content:center;align-items:center;flex:none;line-height:1}
+.studio-site .campus-editorial-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+.studio-site .campus-editorial-hero h1{font-size:clamp(38px,4.8vw,68px);line-height:1.07;color:#18394e;letter-spacing:-.055em;margin:18px 0 24px}
+.studio-site .campus-editorial-hero h1 em{color:#1755ed;font-style:normal}
+.studio-site .campus-editorial-hero p{max-width:44ch;line-height:1.85;font-size:1rem;color:#587080}
+.studio-site .campus-editorial-hero>.campus-page-scene{max-width:420px}
+@media(max-width:899px){.studio-site .campus-editorial-hero{grid-template-columns:minmax(0,1fr);gap:32px}.studio-site .campus-editorial-hero h1{font-size:clamp(34px,7.8vw,54px)}}
