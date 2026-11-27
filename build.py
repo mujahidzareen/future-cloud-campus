@@ -28,7 +28,7 @@ DIST = Path(os.environ.get("FCC_OUTPUT", ASSETS.parent))
 ORIGIN = os.environ.get("FCC_ORIGIN", "https://future-cloud-campus.greybow37.chatgpt.site").rstrip("/")
 PAGES = []
 INDEXABLE = os.environ.get("FCC_INDEXABLE", "0") == "1"
-ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js", "campus-refresh.css")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
+ASSET_VERSION = hashlib.sha256(b"".join((ASSETS / name).read_bytes() for name in ("site.css", "site.js", "enhancements.js", "quran-learning.css", "quran-learning.js", "studio.css", "studio.js", "campus-people.css", "campus-people.js", "campus-refresh.css", "campus-discovery.css", "campus-discovery.js")) + (ROOT / "site_content.json").read_bytes()).hexdigest()[:12]
 
 if (DIST / "assets").resolve() != ASSETS.resolve():
     copytree(ASSETS, DIST / "assets", dirs_exist_ok=True)
@@ -51,14 +51,15 @@ def brand(animate=False):
     return f'<a class="brand" href="/" aria-label="Future Cloud Campus home">{emblem}<span>Future Cloud<span class="brand-accent"> Campus</span><small>ONE CAMPUS. ENDLESS LEARNING.</small></span></a>'
 
 def nav(path):
-    links = [("/subjects/", "Subjects"), ("/curricula/", "Curricula"), ("/free-notes/", "Free Notes"), ("/reviews/", "Reviews")]
     def link(url, label):
         return f'<a href="{url}"{(" aria-current=page" if path == url else "")}>{label}</a>'
     def dropdown(label, links):
         return f'<details class="nav-dropdown"><summary>{label}<span aria-hidden="true">⌄</span></summary><div class="nav-popover">{"".join(link(url, text) for url, text in links)}</div></details>'
-    items = "".join(link(url, label) for url, label in links)
+    items = dropdown("Learning", [("/subjects/", "All subjects"), ("/learning-levels/", "Learning levels"), ("/curricula/", "Curricula"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress")])
+    items += link("/tutors/", "Tutors")
+    items += dropdown("Resources", [("/free-notes/", "Free study notes"), ("/try-a-lesson/", "Try a mini lesson"), ("/journal/", "Blogs & Articles")])
     items += dropdown("Pricing", [("/pricing/", "Plans & pricing"), ("/custom-package/", "Custom packages")])
-    items += dropdown("Discover", [("/tutors/", "Tutors"), ("/try-a-lesson/", "Try a lesson"), ("/about/", "About FCC"), ("/how-it-works/", "How it works"), ("/learning-levels/", "Learning levels"), ("/test-prep/", "Exam preparation"), ("/progress/", "Learning & progress"), ("/journal/", "Blogs & Articles"), ("/countries/", "Countries"), ("/parents/", "For parents"), ("/contact/", "Contact & FAQs")])
+    items += dropdown("About FCC", [("/about/", "About the campus"), ("/how-it-works/", "How it works"), ("/reviews/", "Family feedback"), ("/parents/", "For parents"), ("/countries/", "Countries"), ("/contact/", "Contact & FAQs")])
     return f'''<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="shell nav">{brand(True)}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">{icon("menu")}</button>
     <nav id="nav-links" class="nav-links" aria-label="Main navigation">{items}<a class="mobile-portal" href="/portal/">Portal</a></nav>
@@ -92,7 +93,7 @@ def page(path, title, description, body, crumbs=None):
     <meta name="robots" content="{robots}"><link rel="canonical" href="{canonical}"><link rel="icon" href="/assets/fcc-symbol.png" type="image/png">
     <meta property="og:type" content="website"><meta property="og:title" content="{escape(full_title)}"><meta property="og:description" content="{meta}">
     <meta property="og:url" content="{canonical}"><meta property="og:image" content="{ORIGIN}/assets/fcc-lockup.png"><meta name="twitter:card" content="summary_large_image"><meta property="og:image:alt" content="Future Cloud Campus — One Campus. Endless Learning.">
-    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}<link rel="stylesheet" href="/assets/campus-refresh.css?v={ASSET_VERSION}">{structured_markup}
+    <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}"><script defer src="/assets/site.js?v={ASSET_VERSION}"></script><script defer src="/assets/enhancements.js?v={ASSET_VERSION}"></script><link rel="stylesheet" href="/assets/studio.css?v={ASSET_VERSION}"><script defer src="/assets/studio.js?v={ASSET_VERSION}"></script>{people_assets}{quran_assets}<link rel="stylesheet" href="/assets/campus-refresh.css?v={ASSET_VERSION}"><link rel="stylesheet" href="/assets/campus-discovery.css?v={ASSET_VERSION}"><script defer src="/assets/campus-discovery.js?v={ASSET_VERSION}"></script>{structured_markup}
     </head><body class="studio-site{(" studio-home" if path=="/" else "")} tone-{tone}{(" hero-reversed" if flip else "")}" data-booking={str(path == "/book-a-demo/").lower()}>{nav(path)}<main id="main">{body}</main>{footer()}<details class="quick-help"><summary>{icon("language")}<span>Quick help</span></summary><div><h2>Find your next step.</h2><a href="/subjects/">Explore subjects</a><a href="/pricing/">Plans &amp; fees</a><a href="/free-notes/">Read free notes</a><a href="/faq/">Common questions</a><a href="/book-a-demo/">Book a free demo</a></div></details>{("<div class=mobile-booking-bar><div><strong>A little guidance goes a long way.</strong><span>Start with a free demo enquiry.</span></div>"+button("Book a Free Demo")+"</div>") if path != "/book-a-demo/" and not path.startswith("/portal") else ""}</body></html>'''
     relative_root = "../" * len(Path(path.strip("/")).parts) or "./"
     doc = re.sub(r'(\b(?:href|src)="/)(?!/)', lambda match: match[0][:-1] + relative_root, doc)

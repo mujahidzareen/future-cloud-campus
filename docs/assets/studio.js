@@ -28,14 +28,9 @@
  if(stage)interactive(stage,'--scene-x','--scene-y',12);
  document.querySelectorAll('[data-studio-card]').forEach(node=>interactive(node,'--card-x','--card-y',7));
  document.querySelectorAll('.btn').forEach(node=>interactive(node,'--magnet-x','--magnet-y',7,true));
- let halo=null,haloFrame=0,pointerX=0,pointerY=0;
- if(fine.matches&&!reduce.matches){halo=document.createElement('div');halo.className='studio-cursor-halo';halo.setAttribute('aria-hidden','true');document.body.append(halo);
-  document.addEventListener('pointermove',event=>{if(paused()||!fine.matches){halo.classList.remove('is-visible');return;}pointerX=event.clientX;pointerY=event.clientY;halo.classList.add('is-visible');halo.classList.toggle('is-over-link',Boolean(event.target.closest('a,button,summary')));if(!haloFrame)haloFrame=requestAnimationFrame(()=>{haloFrame=0;halo.style.transform=`translate(calc(${pointerX}px - 50%),calc(${pointerY}px - 50%))`;});},{passive:true});
-  document.addEventListener('pointerleave',()=>halo.classList.remove('is-visible'),{passive:true});
- }
- const motionChanged=()=>{try{sessionStorage.setItem('fcc-motion-paused',String(root.classList.contains('motion-paused')));}catch{}moves.forEach(reset=>reset());stage?.style.removeProperty('--scene-shift');halo?.classList.remove('is-visible');if(paused())revealAll();scheduleScroll();};
+ const motionChanged=()=>{try{sessionStorage.setItem('fcc-motion-paused',String(root.classList.contains('motion-paused')));}catch{}moves.forEach(reset=>reset());stage?.style.removeProperty('--scene-shift');if(paused())revealAll();scheduleScroll();};
  motionButton?.addEventListener('click',motionChanged);reduce.addEventListener('change',motionChanged);fine.addEventListener('change',motionChanged);
- document.addEventListener('visibilitychange',()=>{if(document.hidden){moves.forEach(reset=>reset());halo?.classList.remove('is-visible');}});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){moves.forEach(reset=>reset());}});
 })();
 
 // Pathway choices update real destinations; enquiries retain the selected context.
@@ -43,6 +38,11 @@ document.querySelectorAll('[data-pathway-picker]').forEach(picker=>{
  const data=JSON.parse(picker.querySelector('[data-pathway-data]').textContent),stage=picker.querySelector('[data-pathway-stage]'),curriculum=picker.querySelector('[data-pathway-curriculum]');
  const enquiry=picker.querySelector('[data-pathway-enquiry]'),guide=picker.querySelector('[data-pathway-guide]'),resources=picker.querySelector('[data-pathway-resources]');
  const base=new URL('../',picker.querySelector('[data-pathway-maths]').href);
+ const incoming=new URLSearchParams(location.search);
+ const stageIndex=data.stages.findIndex(item=>item.name===incoming.get('stage'));
+ if(stageIndex>=0)stage.value=String(stageIndex);
+ const curriculumIndex=data.curricula.findIndex(item=>item.name===incoming.get('curriculum'));
+ if(curriculumIndex>=0)curriculum.value=String(curriculumIndex);
  const render=(announce=false)=>{
   const selected=data.stages[Number(stage.value)],course=data.curricula[Number(curriculum.value)];
   picker.querySelector('[data-pathway-context]').textContent=`${selected.name} · ${course.name}`;

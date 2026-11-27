@@ -87,3 +87,13 @@
 - Verified the local compressed heading font loads; size reduced from 136,676 to 63,324 bytes. No field performance score was measured.
 - Existing six illustrative review cards, stock-photo labels, tutor profile dialogs, About sculpture/CEO message, Quran resources and portal Coming Soon pages remain. Inactive social links are now omitted.
 - Confirmed pricing comparison uses labelled example frequency/count and quote-required actual fees, duration and cancellation terms. User requested continuing the remaining work without supplying business details.
+
+## Education-inspired discovery redesign — 27 November 2026
+- Reviewed current official content and desktop browser-rendered layouts for Novakid, Lingokids, AllviA and Cuemath; documented observations and original FCC adaptations in `design/EDUCATION-REFERENCES.md`.
+- Visually reviewed the new hero, original transparent artwork, discovery card, percentages activity and the refreshed Quran header. The artwork loaded at its expected 1100-pixel size.
+- Tested lesson tabs by mouse and keyboard (ArrowRight and Home), incorrect 10 and correct 20 feedback, reset control availability, and the 25% of 120 answer disclosure. Repeated the correct-answer flow at the smallest mobile frame width.
+- Verified native homepage stage choices for Secondary and Higher secondary lead to the correctly preselected Learning Levels picker, including the stage name containing a space.
+- Checked 50 layouts across Home, Subjects, Mathematics, Quran Education, Quran Reading, Tutors, About, Pricing, Learning Levels and Booking at 320, 375, 768, 1024 and 1440 frame widths. Fixed a narrow Mathematics information-card overflow by using a single-column layout and reducing the smallest hero title size; rechecked Mathematics at all five widths with no page overflow. The tested 320-pixel header also keeps Free Demo on one line.
+- Tested grouped mobile navigation, resource submenu, submenu Escape then menu Escape, and desktop Resources → Free study notes navigation.
+- Opened and closed Ayaan’s specific native profile dialog at the 320-pixel frame width (285-pixel dialog width). Confirmed readable dark-green Quran hero text on pale green and all four Quran course cards.
+- Verified the global pause control on the new artwork. Existing reduced-motion, off-screen and inactive-tab rules cover the new motion. No field performance or conversion result is claimed.

@@ -126,3 +126,13 @@ Learning Levels includes native stage/curriculum selectors, context-specific res
 Pricing now includes a comparison table for example frequency/count, focus, confirmed session length/fees when supplied, one-to-one format, and cancellation terms. Unconfirmed details request a personal quote. Official social links render only after configuration/verification. The booking form remains an explicit preview until the existing admissions activation requirements are satisfied. Real portraits and reviews still require approved source material.
 
 Space Grotesk uses a local WOFF file (63,324 bytes versus the original 136,676-byte TTF), with its existing OFL license. No measured page-speed or Core Web Vitals score is claimed.
+
+### Education-inspired discovery redesign — 27 November 2026
+
+`campus_discovery.py` now owns the homepage; `studio_design.py` retains the generator entry point. `assets/campus-discovery.css` applies the bright cream/cobalt/mint visual system and responsive layout; `assets/campus-discovery.js` progressively enhances the native stage form and the original percentages lesson preview. Both assets participate in the build hash.
+
+The hero includes a new transparent clay learning island. The page combines stage discovery, compact subject cards, the interactive lesson example, tutors, Quran learning, study resources, illustrative family feedback, sample pricing and FAQs. The header groups links under Learning, Tutors, Resources, Pricing and About FCC. No reference site’s marketing claims, proprietary characters or customer reviews were copied. See `design/EDUCATION-REFERENCES.md` for the review, adaptation mapping and artwork prompt/path.
+
+Stage choices use a normal GET form to `learning-levels/` and initialize its existing picker through the `stage` query. Curriculum and stage then carry into the enquiry. Lesson tabs support arrows/Home/End, correct and incorrect feedback, reset, and a follow-up answer disclosure; no account, remote request or saved score is involved. Without JavaScript the stage form and worked lesson content remain available.
+
+Per-page artwork, Quran data/library, tutor profile dialogs, About sculpture/CEO message and portal Coming Soon pages remain. New theme rules preserve explicit readable Quran foreground colours. The compressed heading font remains local. Global pause/reduced-motion behavior applies to the new featured artwork, and the unused cursor-halo pointer listener has been removed.
