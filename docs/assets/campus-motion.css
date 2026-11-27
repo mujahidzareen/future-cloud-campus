@@ -85,3 +85,58 @@ main [data-campus-button]:hover{background-position:0% 50%;border-color:#8fe5ed;
 .motion-paused main [data-campus-surface]:before,.tab-inactive main [data-campus-surface]:before{display:none}
 @media(prefers-reduced-motion:reduce){main [data-campus-chapter]{--orbit-phase:0deg!important;--chapter-progress:.5!important;--chapter-curve:32px!important}.learning-roadmap{--road-progress:1!important}main [data-campus-surface]:before{display:none}main [data-campus-surface],main [data-campus-button],.roadmap-node{transition:none!important}}
 @media print{.campus-knowledge-orbit{display:none}.learning-roadmap{--road-progress:1!important}.discovery-subjects>.discovery-section-head,.discovery-faq>div:first-child,.roadmap-fit>div:first-child{position:static}}
+
+/* Overlapping chapters: a section stays in place while its successor rises over it. */
+.campus-scroll-stack{position:relative;isolation:isolate}
+@media(min-width:900px){
+ .campus-scroll-stack>[data-stack-panel]{position:relative;z-index:var(--stack-index,1);border-radius:32px;box-shadow:0 -10px 32px #1129440c;margin:0 20px 56px;overflow:clip;transform-origin:50% 0%;background-color:var(--campus-cream);backface-visibility:hidden}
+ .campus-scroll-stack>.faculty-home-teaser,.campus-scroll-stack>.discovery-resources{width:calc(100% - 40px);max-width:none;padding:64px max(42px,calc((100% - 1252px)/2))}
+ .campus-scroll-stack>.faculty-home-teaser{padding-block:66px}
+ .campus-scroll-stack>.discovery-quran{background-color:#e6f2e9}
+ .campus-scroll-stack>.discovery-lesson{background-color:#102e4b}
+ .campus-scroll-stack.is-stack-ready>.is-stackable{position:sticky;top:var(--stack-top,106px);transform:translateY(calc(var(--stack-cover,0) * -9px)) scale(calc(1 - var(--stack-cover,0) * .035));filter:brightness(calc(1 - var(--stack-cover,0) * .14));will-change:auto}
+ .campus-scroll-stack.is-stack-ready>.is-stackable:focus-within{transform:none;filter:none}
+ .campus-scroll-stack{padding-bottom:24px}
+ .discovery-home>.discovery-feedback{position:relative;z-index:1}
+}
+/* Social platforms remain visible even while their official FCC URLs are pending. */
+.social-pending{font-size:.66rem;font-weight:500;color:#69808d;line-height:1.6}
+.social-unavailable{cursor:default}
+.studio-site .campus-social{display:grid;grid-template-columns:.85fr 1.15fr;gap:65px;align-items:center;border-top:1px solid #e0e7e5}
+.studio-site .campus-social .section-head{margin:0}
+.studio-site .campus-social h2{font-size:clamp(34px,3.7vw,50px);line-height:1.08}
+.studio-site .campus-social .section-head>p{font-size:.94rem;max-width:38ch}
+.campus-social .social-links{gap:13px}
+.campus-social .social-link{min-height:114px;border-radius:20px;background:#fff;box-shadow:inset 0 2px 4px #fff,0 4px 0 #e4ebed;gap:7px}
+.campus-social .social-label{font-size:.8rem}
+.site-footer .social-unavailable{background:#fffdf8;color:var(--social-color);box-shadow:none}
+.site-footer .social-compact .social-link{display:flex;margin:0}
+/* A complete, readable contact form, with no fabricated submission success. */
+.contact-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:start;scroll-margin-top:115px}
+.contact-intro h2{font-size:clamp(34px,3.8vw,52px);line-height:1.1;letter-spacing:-.05em;margin:18px 0 24px}
+.contact-intro h2 em{font-style:normal;color:#1755ed}
+.contact-intro>p{color:#577080;font-size:1rem;line-height:1.9;max-width:38ch}
+.contact-preview-note{margin-top:30px;padding:20px 23px;border:1px solid #d7e6e8;background:#edf6f6;border-radius:17px;color:#345f6a;font-size:.82rem;line-height:1.85}
+.contact-preview-note p{margin-top:6px}
+.contact-form{padding:30px!important;border-radius:26px}
+.contact-form .field-grid{gap:23px 20px;margin:0}
+.contact-form .field-grid label{font-size:.83rem;line-height:1.7;font-weight:600;color:#34546b}
+.contact-form .field-grid input,.contact-form .field-grid select,.contact-form .field-grid textarea{border:1px solid #cedde5;border-radius:12px;background:#f9fbfc;padding:11px 13px;min-height:49px;font:inherit;font-size:.94rem;color:#183a53;margin-top:8px}
+.contact-form .field-grid input:focus,.contact-form .field-grid select:focus,.contact-form .field-grid textarea:focus{outline:2px solid #7fb5db;outline-offset:2px;background:#fff}
+.contact-form .field-wide{grid-column:1/-1}
+.contact-form textarea{resize:vertical;min-height:150px!important}
+.contact-form .consent-field{font-size:.8rem;line-height:1.8;color:#5a7080}
+.field-optional,.contact-required{font-size:.7rem;font-weight:400;color:#6d818d}
+.contact-form-wrap{min-width:0}
+.contact-form-wrap [hidden]{display:none!important}
+.contact-summary{padding:30px}
+.contact-summary h3{font-size:2rem;margin:17px 0 14px;line-height:1.15}
+.contact-summary>p{color:#557080;line-height:1.8;font-size:.9rem}
+.contact-summary dl{display:grid;grid-template-columns:100px minmax(0,1fr);gap:15px;border-block:1px solid #dce6e7;padding-block:24px;margin-block:24px;font-size:.85rem;line-height:1.85}
+.contact-summary dt{font-weight:600;color:#3a596e}
+.contact-summary dd{margin:0;color:#577080;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:899px){.studio-site .campus-social,.contact-layout{grid-template-columns:1fr;gap:35px}.contact-layout{padding-top:35px}.campus-scroll-stack>[data-stack-panel]{transform:none!important;filter:none!important}}
+@media(max-width:600px){.contact-form{padding:24px 20px!important}.contact-form .field-grid{grid-template-columns:1fr;gap:20px}.contact-summary{padding:24px 20px}.contact-summary dl{grid-template-columns:1fr;gap:5px}.contact-summary dd{margin-bottom:13px}.campus-social .social-links{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.campus-social .social-link{min-height:106px;padding:14px 8px}.campus-social .social-label{font-size:.7rem}.campus-social .social-pending{font-size:.59rem}.contact-intro h2{font-size:35px}}
+.motion-paused .campus-scroll-stack>.is-stackable,.tab-inactive .campus-scroll-stack>.is-stackable{transform:none!important;filter:none!important}
+@media(prefers-reduced-motion:reduce){.campus-scroll-stack>.is-stackable{position:relative!important;top:auto!important;transform:none!important;filter:none!important}}
+@media print{.campus-scroll-stack>.is-stackable{position:static!important;transform:none!important;filter:none!important}.contact-form{box-shadow:none}}

@@ -10,7 +10,7 @@ from content import SUBJECTS, QURAN, COUNTRIES, FAQ, STEPS
 from artwork import ART, generate_artwork
 from additions import EXTRA_SUBJECTS, GULF_COUNTRIES, CURRICULA, LEVELS, PLANS, ARTICLES, NOTES
 from urllib.parse import urlencode
-from enhancements import CONFIG, LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards, social_icons
+from enhancements import CONFIG, LIVE, CONTACT_LIVE, TUTORS, REVIEWS, enrich, lesson_body, tutor_cards, review_cards, social_icons, contact_form
 from pricing_content import pricing_body, pricing_preview
 from quran_learning import hub as quran_hub, workbook as quran_workbook, reader as quran_reader
 from studio_design import studio_home
@@ -265,7 +265,7 @@ for slug, name, desc, details, glyph in [
 ]:
     path=f"/{slug}/"
     crumbs=[("Home","/"),(name,path)]
-    page(path,name,desc,hero_small("FUTURE CLOUD CAMPUS",name,desc,crumbs,button("Start a demo enquiry",variant="secondary") if slug=="contact" else "",glyph)+f'<section class="shell section"><div class="notice">{icon("language")}<p>{details}</p></div>{("<div class=resource-teasers>"+resource_teasers()+"</div>") if slug == "contact" else ""}</section>'+(f'<section class="shell section faq-grid">{section_head("ADMISSIONS","Before you get in touch.")}{accordions(FAQ[:3])}</section>' if slug == "contact" else ""),crumbs)
+    page(path,name,desc,hero_small("FUTURE CLOUD CAMPUS",name,desc,crumbs,button("Write an enquiry", "#contact-form", "secondary") if slug=="contact" else "",glyph)+(contact_form() if slug == "contact" else "")+f'<section class="shell section"><div class="notice">{icon("language")}<p>{details}</p></div>{("<div class=resource-teasers>"+resource_teasers()+"</div>") if slug == "contact" else ""}</section>'+(f'<section class="shell section faq-grid">{section_head("ADMISSIONS","Before you get in touch.")}{accordions(FAQ[:3])}</section>' if slug == "contact" else ""),crumbs)
 
 POLICIES = {
     "privacy":("Privacy","The preview form is for sample details. It does not transmit or store submissions. Before live intake, FCC must approve how guardian details are collected, retained, shared and deleted."),
@@ -424,5 +424,5 @@ page("/reviews/", "Parent reviews", "Parent feedback and learning stories shared
 (DIST / ".nojekyll").touch()
 (DIST / "robots.txt").write_text((f"User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n" if INDEXABLE else "User-agent: *\nDisallow: /\n"), encoding="utf-8")
 (DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f"<url><loc>{ORIGIN}{path}</loc></url>" for path in PAGES if not path.startswith("/portal") and path not in ("/book-a-demo/","/privacy/","/terms/","/cookies/","/refund-cancellation/","/safeguarding/") and (path != "/tutors/" or TUTORS) and (path != "/reviews/" or REVIEWS))+"</urlset>", encoding="utf-8")
-(DIST / "assets" / "intake-config.json").write_text(json.dumps({"endpoint": CONFIG["admissions"]["endpoint"] if LIVE else "", "email": CONFIG["admissions"]["email"] if LIVE else "", "provider": CONFIG["admissions"]["provider_name"] if LIVE else "", "providerPrivacy": CONFIG["admissions"]["provider_privacy_url"] if LIVE else "", "live": LIVE}), encoding="utf-8")
+(DIST / "assets" / "intake-config.json").write_text(json.dumps({"endpoint": CONFIG["admissions"]["endpoint"] if LIVE else "", "email": CONFIG["admissions"]["email"] if LIVE or CONTACT_LIVE else "", "provider": CONFIG["admissions"]["provider_name"] if LIVE or CONTACT_LIVE else "", "providerPrivacy": CONFIG["admissions"]["provider_privacy_url"] if LIVE or CONTACT_LIVE else "", "live": LIVE, "contactLive": CONTACT_LIVE, "contactEndpoint": CONFIG["admissions"].get("contact_endpoint", "") if CONTACT_LIVE else ""}), encoding="utf-8")
 print(f"Generated {len(PAGES)} pages. Intake: {'live' if LIVE else 'preview (verified endpoint required)'}. Indexing: {INDEXABLE}")

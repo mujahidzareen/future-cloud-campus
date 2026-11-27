@@ -114,3 +114,39 @@ document.querySelectorAll('[data-review-carousel]').forEach(carousel=>{
  else window.addEventListener('resize',()=>{paint();announce();},{passive:true});
  paint();announce();
 });
+
+// Contact enquiries: validate, review, edit and copy locally until a verified receiver is configured.
+document.querySelectorAll('[data-contact-form]').forEach(form=>{
+ const wrap=form.parentElement,summary=wrap.querySelector('[data-contact-summary]'),details=summary.querySelector('[data-contact-details]'),error=form.querySelector('[data-contact-error]'),submit=form.querySelector('[data-contact-submit]'),notice=document.querySelector('[data-contact-notice]');
+ const status=summary.querySelector('[data-contact-status]');let config={contactLive:false},pending=false,sent=false,text='';
+ const configReady=fetch(new URL('intake-config.json',document.querySelector('script[src*="enhancements.js"]').src),{credentials:'same-origin'}).then(response=>{if(!response.ok)throw Error();return response.json();}).then(value=>{
+  if(value.contactLive&&/^https:\/\//.test(value.contactEndpoint)&&value.email&&value.provider&&/^https:\/\//.test(value.providerPrivacy)){
+   config=value;notice.replaceChildren();const heading=document.createElement('strong'),copy=document.createElement('p'),link=document.createElement('a');heading.textContent='Contact admissions';copy.textContent=`Your enquiry goes to ${value.email} through ${value.provider}. `;link.href=value.providerPrivacy;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Provider privacy information';copy.append(link);notice.append(heading,copy);submit.textContent='Send enquiry';
+  }
+ }).catch(()=>{});
+ form.elements.message.addEventListener('input',()=>form.elements.message.setCustomValidity(''));
+ const entries=()=>[['Name',form.elements.name.value.trim()],['Email',form.elements.email.value.trim()],['Phone',form.elements.phone.value.trim()||'Not provided'],['Topic',form.elements.topic.value],['Message',form.elements.message.value.trim()]];
+ const review=reference=>{
+  const values=entries();text=values.map(([key,value])=>`${key}: ${value}`).join('\n');details.replaceChildren();
+  values.forEach(([key,value])=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=key;dd.textContent=value;details.append(dt,dd);});
+  summary.querySelector('[data-contact-summary-title]').textContent=sent?'Your enquiry has been received.':'Ready to review.';
+  summary.querySelector('[data-contact-summary-note]').textContent=sent?'Admissions will review your message.'+(reference?` Reference: ${reference}`:''):'Your message has not been sent. You can edit or copy these details.';
+  summary.querySelector('[data-contact-edit]').hidden=sent;status.textContent='';form.hidden=true;summary.hidden=false;summary.focus();
+ };
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();if(pending||sent)return;error.textContent='';
+  for(const field of form.querySelectorAll('[required]')){if(typeof field.value==='string'&&field.type!=='checkbox')field.value=field.value.trim();if(field.name==='message')field.setCustomValidity(field.value.length>=10?'':'Please write at least 10 characters.');if(!field.checkValidity()){field.reportValidity();field.focus();return;}}
+  if(form.elements.website.value){error.textContent='Unable to process this enquiry. Please reload and try again.';return;}
+  pending=true;submit.disabled=true;submit.textContent='Checking enquiry…';
+  try{
+   await configReady;if(!config.contactLive){review();return;}
+   const payload=Object.fromEntries(new FormData(form));delete payload.website;payload.consent=true;payload.type='contact';payload.source='Future Cloud Campus';payload.requestId=crypto.randomUUID();payload.submittedAt=new Date().toISOString();
+   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);let response;
+   try{response=await fetch(config.contactEndpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:controller.signal,credentials:'omit'});}finally{clearTimeout(timeout);}
+   const result=await response.json();if(!response.ok||result.ok!==true)throw Error('Receipt unconfirmed');sent=true;review(typeof result.reference==='string'?result.reference.slice(0,100):'');
+  }catch{error.textContent='We could not confirm receipt. Your details are still here; please try again.';}
+  finally{pending=false;submit.disabled=false;submit.textContent=config.contactLive?'Send enquiry':'Review enquiry';}
+ });
+ summary.querySelector('[data-contact-edit]').addEventListener('click',()=>{summary.hidden=true;form.hidden=false;form.elements.name.focus();});
+ summary.querySelector('[data-contact-copy]').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);status.textContent='Enquiry copied. No additional message was sent.';}catch{status.textContent='Select the visible details to copy them manually.';}});
+});

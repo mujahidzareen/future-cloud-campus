@@ -5,7 +5,8 @@
     "whatsapp": "",
     "privacy_reviewed": false,
     "provider_name": "",
-    "provider_privacy_url": ""
+    "provider_privacy_url": "",
+    "contact_endpoint": ""
   },
   "tutors": [],
   "reviews": [],

@@ -108,3 +108,41 @@
  new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class']});
  reduce.addEventListener('change',sync);wide.addEventListener('change',sync);fine.addEventListener('change',sync);document.addEventListener('visibilitychange',sync);sync();
 })();
+
+// Native sticky stacking, enabled only when a complete chapter fits beneath the header.
+(()=>{
+ const stack=document.querySelector('[data-scroll-stack]');if(!stack||!('ResizeObserver' in window))return;
+ const panels=[...stack.children],root=document.documentElement,wide=matchMedia('(min-width:900px)'),reduce=matchMedia('(prefers-reduced-motion:reduce)');
+ let frame=0,measureFrame=0,top=106,enabled=false,visible=false;
+ panels.forEach((panel,index)=>{panel.dataset.stackPanel='';panel.style.setProperty('--stack-index',String(index+1));});
+ const paused=()=>reduce.matches||root.classList.contains('motion-paused');
+ const paint=()=>{
+  frame=0;if(!enabled||!visible||document.hidden)return;
+  panels.forEach((panel,index)=>{
+   const next=panels[index+1];let progress=0;
+   if(next&&panel.classList.contains('is-stackable')&&!panel.matches(':focus-within')){
+    const box=panel.getBoundingClientRect(),nextBox=next.getBoundingClientRect();
+    progress=Math.max(0,Math.min(1,(top+box.height-nextBox.top)/Math.max(1,box.height)));
+   }
+   panel.style.setProperty('--stack-cover',progress.toFixed(4));
+  });
+ };
+ const schedule=()=>{if(!frame&&enabled&&visible&&!document.hidden)frame=requestAnimationFrame(paint);};
+ const measure=()=>{
+  measureFrame=0;top=Math.ceil(document.querySelector('.site-header')?.getBoundingClientRect().height||88)+18;
+  enabled=wide.matches&&!paused();stack.style.setProperty('--stack-top',`${top}px`);
+  panels.forEach(panel=>{const fits=enabled&&panel.offsetHeight<=innerHeight-top-18;panel.classList.toggle('is-stackable',fits);if(!fits)panel.style.removeProperty('--stack-cover');});
+  stack.classList.toggle('is-stack-ready',enabled);schedule();
+ };
+ const requestMeasure=()=>{if(!measureFrame)measureFrame=requestAnimationFrame(measure);};
+ new ResizeObserver(requestMeasure).observe(stack);
+ panels.forEach(panel=>new ResizeObserver(requestMeasure).observe(panel));
+ new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();},{rootMargin:'100px'}).observe(stack);
+ new MutationObserver(requestMeasure).observe(root,{attributes:true,attributeFilter:['class']});
+ wide.addEventListener('change',requestMeasure);reduce.addEventListener('change',requestMeasure);
+ addEventListener('resize',requestMeasure,{passive:true});addEventListener('scroll',schedule,{passive:true});
+ document.addEventListener('visibilitychange',schedule);document.fonts?.ready.then(requestMeasure);
+ // Keyboard navigation never leaves focus obscured behind the next overlapping chapter.
+ stack.addEventListener('focusin',event=>{const panel=event.target.closest('[data-stack-panel]');if(!panel||!enabled)return;const next=panels[panels.indexOf(panel)+1];if(event.target.matches(':focus-visible')&&next&&next.getBoundingClientRect().top<top+panel.offsetHeight){const index=panels.indexOf(panel),before=panels.slice(0,index).reduce((sum,item)=>sum+item.offsetHeight+parseFloat(getComputedStyle(item).marginTop)+parseFloat(getComputedStyle(item).marginBottom),0);scrollTo({top:scrollY+stack.getBoundingClientRect().top+before-top,behavior:'instant'});}schedule();});
+ measure();
+})();
